@@ -1,8 +1,10 @@
 title: Test
 description: Test web site
 template: basic
-lang: Lua
+langguage: Lua
 size: 100
+iframe:
+readme: 
 links:
   dsa: https:///11231
   das: https:///11231
