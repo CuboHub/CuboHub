@@ -1,0 +1,26 @@
+{
+  "name": "cubohub",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "express": "4.16.2",
+    "github": "12.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "npm start && npm app",
+    "start": "node server.js",
+    "app": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CuboHub/CuboHub.git"
+  },
+  "author": "Tiago Danin <TiagoDanin@outlook.com> (https://TiagoDanin.github.io)",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/CuboHub/CuboHub/issues"
+  },
+  "homepage": "https://github.com/CuboHub/CuboHub#readme"
+}
