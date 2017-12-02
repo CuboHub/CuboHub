@@ -1,8 +1,10 @@
 'use strict'
 
 var Client = require('github')
+var yaml = require('js-yaml');
 var fs   = require('fs');
-
+var jformat = require('jformat');
+var hubdown = require('hubdown')
 
 var github = new Client({
 	debug: false
@@ -50,6 +52,69 @@ function chUpdateFile(github, path, code, message, branch, owner, repo) {
 	})
 }
 
+
+function chCheckXML(github, owner, repo) {
+	github.repos.getContent({
+		owner: owner,
+		repo: repo,
+		path: '.github/cuboHub.xml'
+	}, function (err, res) {
+		if (res) {
+			yml = Buffer.from(res.data.content, 'base64').toString()
+			return chPage(github, owner, repo, yml)
+		}
+	})
+	github.repos.getContent({
+		owner: owner,
+		repo: repo,
+		path: '.github/CuboHub.xml'
+	}, function (err, res) {
+		if (res) {
+			yml = Buffer.from(res.data.content, 'base64').toString()
+			return chPage(github, owner, repo, yml)
+		}
+	})
+	github.repos.getContent({
+		owner: owner,
+		repo: repo,
+		path: 'cuboHub.xml'
+	}, function (err, res) {
+		if (res) {
+			yml = Buffer.from(res.data.content, 'base64').toString()
+			return chPage(github, owner, repo, yml)
+		}
+	})
+	github.repos.getContent({
+		owner: owner,
+		repo: repo,
+		path: 'CuboHub.xml'
+	}, function (err, res) {
+		if (res) {
+			yml = Buffer.from(res.data.content, 'base64').toString()
+			return chPage(github, owner, repo, yml)
+		}
+	})
+	github.repos.getContent({
+		owner: owner,
+		repo: repo,
+		path: '.cuboHub.xml'
+	}, function (err, res) {
+		if (res) {
+			yml = Buffer.from(res.data.content, 'base64').toString()
+			return chPage(github, owner, repo, yml)
+		}
+	})
+	github.repos.getContent({
+		owner: owner,
+		repo: repo,
+		path: '.CuboHub.xml'
+	}, function (err, res) {
+		if (res) {
+			yml = Buffer.from(res.data.content, 'base64').toString()
+			return chPage(github, owner, repo, yml)
+		}
+	})
+}
 
 //chPage(github, owner, repo, yml)
 //chPage(github, 'TiagoDanin', 'TestGithub', 'yml')
