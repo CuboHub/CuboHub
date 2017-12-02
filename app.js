@@ -52,6 +52,32 @@ function chUpdateFile(github, path, code, message, branch, owner, repo) {
 	})
 }
 
+function chPage(github, owner, repo, yml) {
+	try {
+		var config = yaml.safeLoad(fs.readFileSync('cubohub.yml', 'utf8'));
+		var site = yaml.safeLoad(fs.readFileSync('defaut.html', 'utf8'));
+		hubdown('# Tiago\n\n-------\n\n`hello world`').then(readme_html => {
+			site = site.format({
+				title: config.title,
+				description: config.description,
+				lang: config.lang,
+				repo: repo,
+				size: config.size,
+				watchers: 100,
+				readme_html: readme_html.content
+			}, true)
+			fs.writeFileSync('index.html', site, 'utf8')
+		});
+
+		//console.log(config);
+		//console.log(config.title)
+		//console.log(config.desc)
+		//console.log(config.template)
+		//console.log(config.links)
+	} catch (e) {
+		console.log(e);
+	}
+}
 
 function chCheckXML(github, owner, repo) {
 	github.repos.getContent({
@@ -117,7 +143,7 @@ function chCheckXML(github, owner, repo) {
 }
 
 //chPage(github, owner, repo, yml)
-//chPage(github, 'TiagoDanin', 'TestGithub', 'yml')
+chPage(github, 'TiagoDanin', 'TestGithub', 'yml')
 
 //chCheckXML(github, owner, repo)
 //chCheckXML(github, 'TiagoDanin', 'TestGithub')

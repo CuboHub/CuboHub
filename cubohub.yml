@@ -1,0 +1,9 @@
+title: Test
+description: Test web site
+template: basic
+lang: Lua
+size: 100
+links:
+  dsa: https:///11231
+  das: https:///11231
+  dsd: https:///11231
