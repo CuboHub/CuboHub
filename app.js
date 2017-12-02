@@ -144,7 +144,6 @@ async function chPage(github, owner, repo_name, yml) {
 	site = site.format(info, true)
 
 	chUpdateFile(github, 'index.html', site, 'TEST: UP', 'master', owner, repo_name)
-	fs.writeFileSync('index.html', site, 'utf8')
 }
 
 function chCheckXML(github, owner, repo) {

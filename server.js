@@ -1,14 +1,11 @@
-const express = require('express')
-const app = express()
-
-app.get('/', function (req, res) {
-	res.send('Hello World!')
+const WebhooksApi = require('@octokit/webhooks')
+const webhooks = new WebhooksApi({
+	secret: 'mysecret'
 })
 
-app.get('/token/:token', function (req, res) {
-  res.send(req.params.token)
+webhooks.on('push', ({id, name, payload}) => {
+	console.log(name)
+	console.log(payload)
 })
 
-app.listen(3000, function () {
-	console.log('Example app listening on port 3000!')
-})
+require('http').createServer(webhooks.middleware).listen(3000)
