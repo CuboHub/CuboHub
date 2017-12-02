@@ -60,6 +60,5 @@ typings/
 
 # Project
 token
-index.html
-defaut.html
+*.html
 test.js
