@@ -59,6 +59,6 @@ typings/
 .env
 
 # Project
-token
+EnvPS.ps1
 *.html
 test.js

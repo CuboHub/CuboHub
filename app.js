@@ -14,7 +14,7 @@ var github = new Client({
 
 github.authenticate({
 	type: 'token',
-	token: fs.readFileSync('token', 'utf8')
+	token: process.env.github_token
 })
 
 function chUpdateFile(github, path, code, message, branch, owner, repo) {
@@ -212,10 +212,17 @@ function chCheckXML(github, owner, repo) {
 }
 
 //chCheckXML(github, owner, repo)
-chCheckXML(github, 'TiagoDanin', 'TestGithub')
+//chCheckXML(github, 'TiagoDanin', 'TestGithub')
 
 //chPage(github, owner, repo, yml)
 //chPage(github, 'TiagoDanin', 'TestGithub', 'yml')
 
 //chUpdateFile(github, path, code, message, branch, owner, repo)
 //chUpdateFile(github, 'index.html', '<html><h1>Hello World!</h1></html>', 'TEST: UP', 'master', 'TiagoDanin', 'TestGithub')
+
+module.exports = {
+	github,
+	chCheckXML,
+	chPage,
+	chUpdateFile
+}
