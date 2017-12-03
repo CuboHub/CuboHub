@@ -4,15 +4,16 @@
   "description": "",
   "main": "app.js",
   "dependencies": {
-    "@octokit/webhooks": "^3.0.1",
-    "bytelabel": "^2.0.2",
+    "@octokit/webhooks": "3.0.1",
+    "bytelabel": "2.0.2",
     "express": "4.16.2",
+    "express-github-webhook": "^1.0.6",
     "github": "12.0.1",
-    "hubdown": "^1.1.0",
+    "hubdown": "1.1.0",
     "jformat": "1.0.3",
     "js-yaml": "3.10.0",
-    "request": "^2.83.0",
-    "request-promise-native": "^1.0.5"
+    "request": "2.83.0",
+    "request-promise-native": "1.0.5"
   },
   "devDependencies": {},
   "scripts": {
