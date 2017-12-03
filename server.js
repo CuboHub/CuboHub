@@ -7,7 +7,7 @@ const webhooks    = new WebhooksApi({
 	secret: process.env.webhooks_secret
 })
 
-const web = http
+var web = http
 if (process.env.web_protocol && process.env.web_protocol == 'https') {
 	web = https
 }
