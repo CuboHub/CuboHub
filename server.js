@@ -14,6 +14,7 @@ console.log('[+] Start')
 var app_express = express();
 app_express.use(bodyParser.json())
 app_express.use(webhookHandler)
+app_express.set('port', process.env.PORT)
 
 app_express.get('/', function (req, res) {
 	res.send('Hello World!')
@@ -37,5 +38,6 @@ if (process.env.web_protocol && process.env.web_protocol == 'https') {
 	web = https
 }
 
-web.createServer(app_express).listen(process.env.PORT)
-console.log('[+] Port: ', process.env.PORT)
+app_express.listen(app_express.get('port'), function() {
+	console.log('[+] Port: ', app_express.get('port'))
+})
