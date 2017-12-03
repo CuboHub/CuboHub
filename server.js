@@ -1,10 +1,16 @@
-const WebhooksApi = require('@octokit/webhooks')
-const http        = require('http')
-const app         = require('./app.js')
+const WebhooksApi   = require('@octokit/webhooks')
+const https         = require('https')
+const http          = require('http')
+const app           = require('./app.js')
 
 const webhooks    = new WebhooksApi({
 	secret: process.env.webhooks_secret
 })
+
+const web = http
+if (process.env.web_protocol && process.env.web_protocol == 'https') {
+	web = https
+}
 
 console.log('[+] Start')
 webhooks.on('push', ({id, name, payload}) => {
@@ -14,5 +20,5 @@ webhooks.on('push', ({id, name, payload}) => {
 	app.chCheckXML(app.github, owner, repo)
 })
 
-http.createServer(webhooks.middleware).listen(process.env.PORT)
+web.createServer(webhooks.middleware).listen(process.env.PORT)
 console.log('[+] Port: ', process.env.PORT)
