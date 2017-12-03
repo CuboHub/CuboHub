@@ -23,7 +23,7 @@ app_express.get('/', function (req, res) {
 webhookHandler.on('push', function (repo, data) {
 	var repo = data.repository.name
 	var owner = data.repository.owner.name
-	console.log(`[+] webhooks:push: ${id}, ${name}, ${owner}, +payload`)
+	console.log(`[+] webhooks:push: ${name}, ${owner}, +payload`)
 	app.chCheckXML(app.github, owner, repo)
 });
 
