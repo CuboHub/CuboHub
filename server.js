@@ -30,4 +30,4 @@ webhookHandler.on('push', function (event, repo, data) {
 	app.chCheckXML(app.github, owner, repo)
 });
 
-app_express.listen(process.env.port, () => console.log('[+] Port: ', process.env.port))
+app_express.listen(process.env.port, () => console.log('[+] Port: ', process.env.PORT))
