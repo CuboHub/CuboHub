@@ -1,5 +1,7 @@
 const GithubWebHook = require('express-github-webhook')
 const express       = require('express')
+const https         = require('https')
+const http          = require('http')
 const app           = require('./app.js')
 const bodyParser    = require('body-parser')
 
@@ -30,4 +32,10 @@ webhookHandler.on('push', function (event, repo, data) {
 	app.chCheckXML(app.github, owner, repo)
 });
 
-app_express.listen(process.env.port, () => console.log('[+] Port: ', process.env.PORT))
+var web = http
+if (process.env.web_protocol && process.env.web_protocol == 'https') {
+	web = https
+}
+
+web.createServer(app_express).listen(process.env.PORT)
+console.log('[+] Port: ', process.env.PORT)
