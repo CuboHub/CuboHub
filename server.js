@@ -6,7 +6,7 @@ const app           = require('./app.js')
 const bodyParser    = require('body-parser')
 
 var webhookHandler = GithubWebHook({
-	path: '/webhook',
+	path: '/webhooks',
 	secret: process.env.webhooks_secret
 });
 
@@ -20,15 +20,9 @@ app_express.get('/', function (req, res) {
 	res.send('Hello World!')
 })
 
-webhookHandler.on('push', function (event, repo, data) {
-	console.log(event)
-	console.log('\n\n')
-	console.log(repo)
-	console.log('\n\n')
-	console.log(data)
-	console.log('\n\n')
-	var repo = payload.repository.name
-	var owner = payload.repository.owner.name
+webhookHandler.on('push', function (repo, data) {
+	var repo = data.repository.name
+	var owner = data.repository.owner.name
 	console.log(`[+] webhooks:push: ${id}, ${name}, ${owner}, +payload`)
 	app.chCheckXML(app.github, owner, repo)
 });
