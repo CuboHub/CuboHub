@@ -1,24 +1,33 @@
-const WebhooksApi   = require('@octokit/webhooks')
-const https         = require('https')
-const http          = require('http')
+const GithubWebHook = require('express-github-webhook')
+const express       = require('express')
 const app           = require('./app.js')
+const bodyParser    = require('body-parser')
 
-const webhooks    = new WebhooksApi({
+var webhookHandler = GithubWebHook({
+	path: '/webhook',
 	secret: process.env.webhooks_secret
-})
-
-var web = http
-if (process.env.web_protocol && process.env.web_protocol == 'https') {
-	web = https
-}
+});
 
 console.log('[+] Start')
-webhooks.on('push', ({id, name, payload}) => {
+var app_express = express();
+app_express.use(bodyParser.json())
+app_express.use(webhookHandler)
+
+app_express.get('/', function (req, res) {
+	res.send('Hello World!')
+})
+
+webhookHandler.on('push', function (event, repo, data) {
+	console.log(event)
+	console.log('\n\n')
+	console.log(repo)
+	console.log('\n\n')
+	console.log(data)
+	console.log('\n\n')
 	var repo = payload.repository.name
 	var owner = payload.repository.owner.name
 	console.log(`[+] webhooks:push: ${id}, ${name}, ${owner}, +payload`)
 	app.chCheckXML(app.github, owner, repo)
-})
+});
 
-web.createServer(webhooks.middleware).listen(process.env.PORT)
-console.log('[+] Port: ', process.env.PORT)
+app_express.listen(process.env.port, () => console.log('[+] Port: ', process.env.port))
