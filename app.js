@@ -58,12 +58,12 @@ function chUpdateFile(github, path, code, message, branch, owner, repo) {
 async function chPage(github, owner, repo_name, yml) {
 	console.log(`[+] chPage: +github, ${owner}, ${repo}, +yml`)
 	var config = yaml.safeLoad(yml);
-	
+
 	var site = ''
 	if (config.template_raw) {
 		site = await request(config.template_raw)
 	} else {
-		site = yaml.safeLoad(fs.readFileSync('template/' + config.template + '.html', 'utf8'));
+		site = await readme(`https://raw.githubusercontent.com/CuboHub/${config.template}-theme/master/README.md`)
 	}
 
 	var readme_md = ''
@@ -139,6 +139,7 @@ async function chPage(github, owner, repo_name, yml) {
 		has_pages: repo.has_pages,
 		mirror_url: repo.mirror_url,
 		archived: repo.archived,
+		seo: #SON
 	}
 
 	site = site.format(info, true)
