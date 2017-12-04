@@ -56,14 +56,61 @@ function chUpdateFile(github, path, code, message, branch, owner, repo) {
 }
 
 async function chPage(github, owner, repo_name, yml) {
-	console.log(`[+] chPage: +github, ${owner}, ${repo}, +yml`)
+	console.log(`[+] chPage: +github, ${owner}, ${repo_name}, +yml`)
 	var config = yaml.safeLoad(yml);
 
+	var repo = await github.repos.get({
+		owner: owner,
+		repo: repo_name
+	})
+	repo = repo.data
+
 	var site = ''
+	var link = '<a href="{url}">{title}</a>'
 	if (config.template_raw) {
 		site = await request(config.template_raw)
 	} else {
-		site = await readme(`https://raw.githubusercontent.com/CuboHub/${config.template}-theme/master/README.md`)
+		site = await request(`https://raw.githubusercontent.com/CuboHub/${config.template}-theme/master/default.html`)
+		link = await request(`https://raw.githubusercontent.com/CuboHub/${config.template}-theme/master/link.html`)
+	}
+	if (config.link_template_raw) {
+		link = await request(config.link_template_raw)
+	}
+
+	var cubohub = 'Created with <a href="https://CuboHub.github.io" target="_blank">CuboHub</a>'
+	var seo = `
+		<meta name="author" content="{author}" />
+		<meta name="description" content="{description}" />
+		<meta name="keywords" content="{keywords}" />
+		<meta property="og:title" content="{title}"/>
+		<meta property="og:image" content="{image}"/>
+		<meta property="og:url" content="{url}"/>
+		<meta property="og:site_name" content="{site_name}"/>
+		<meta property="og:description" content="{description}"/>
+		<meta name="twitter:title" content="{title}" />
+		<meta name="twitter:image" content="{image}" />
+		<meta name="twitter:url" content="{url}" />
+		<meta name="twitter:card" content="{twitter_card}" />
+	`
+	if (!config.seo) {
+		config.seo = {}
+	}
+	seo = seo.format({
+		author: config.seo['author'] || owner,
+		description: config.seo['description'] || config.description,
+		keywords: config.seo['keywords'] || repo.name,
+		title: config.seo['title'] || config.title || repo.name,
+		image: config.seo['image'] || '',
+		url: config.seo['url'] || '',
+		site_name: config.seo['site_name'] || config.title || repo.name,
+		twitter_card: config.seo['twitter_card'] || ''
+	}, true)
+
+	var links = config.links || {}
+	var links_html = ''
+	for (var index in links) {
+		var url = links[index]
+		links_html += link.format({url: url, title: index}, true) + '\n'
 	}
 
 	var readme_md = ''
@@ -89,12 +136,6 @@ async function chPage(github, owner, repo_name, yml) {
 	var readme_html = await hubdown(readme_md)
 	readme_html = readme_html.content
 	var content_html = readme_html + iframe_html
-
-	var repo = await github.repos.get({
-		owner: owner,
-		repo: repo_name
-	})
-	repo = repo.data
 
 	var size_repo_kb = (config.size || repo.size) * 1024
 	var size_repo = bytelabel(size_repo_kb, {round: true})
@@ -139,12 +180,13 @@ async function chPage(github, owner, repo_name, yml) {
 		has_pages: repo.has_pages,
 		mirror_url: repo.mirror_url,
 		archived: repo.archived,
-		seo: #SON
+		seo: seo,
+		links: links_html,
+		cubohub: cubohub
 	}
 
 	site = site.format(info, true)
-
-	chUpdateFile(github, 'index.html', site, 'TEST: UP', 'master', owner, repo_name)
+	//chUpdateFile(github, 'index.html', site, 'TEST: UP', 'master', owner, repo_name)
 }
 
 function chCheckXML(github, owner, repo) {
