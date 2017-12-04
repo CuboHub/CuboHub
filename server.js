@@ -17,14 +17,18 @@ app_express.use(webhookHandler)
 app_express.set('port', process.env.PORT)
 
 app_express.get('/', function (req, res) {
-	res.send('Hello World!')
+	res.send('Hello World!\nGO > htpps://CuboHub.github.io')
 })
 
 webhookHandler.on('push', function (repo, data) {
-	var repo = data.repository.name
-	var owner = data.repository.owner.name
-	console.log(`[+] webhooks:push: ${repo}, ${owner}`)
-	app.chCheckXML(app.github, owner, repo)
+	try {
+		var repo = data.repository.name
+		var owner = data.repository.owner.name
+		console.log(`[+] webhooks:push: ${repo}, ${owner}`)
+		app.chCheckXML(app.github, owner, repo)
+	} catch (e) {
+		console.log(`[-] Error:\n${e}\n\n`);
+	}
 });
 
 var web = http
