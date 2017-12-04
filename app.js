@@ -7,6 +7,7 @@ var request   = require("request-promise-native")
 var jformat   = require('jformat');
 var hubdown   = require('hubdown')
 var bytelabel = require('bytelabel')
+var dateTime  = require('node-datetime');
 
 var github = new Client({
 	debug: false
@@ -57,6 +58,7 @@ function chUpdateFile(github, path, code, message, branch, owner, repo) {
 
 async function chPage(github, owner, repo_name, yml) {
 	console.log(`[+] chPage: +github, ${owner}, ${repo_name}, +yml`)
+	var dataTimeNow = dateTime.create();
 	var config = yaml.safeLoad(yml);
 
 	var repo = await github.repos.get({
@@ -114,17 +116,23 @@ async function chPage(github, owner, repo_name, yml) {
 	}
 
 	var readme_md = ''
-	if (config.readme || config.readme_file) {
+	if (config.readme) {
+		if (config.readme == true) {
+			config.readme = 'README.md'
+		}
 		var readme_data = await github.repos.getContent({
 			owner: owner,
 			repo: repo_name,
-			path: config.readme_file || 'README.md'
+			path: config.readme || 'README.md'
 		})
 		readme_md = Buffer.from(readme_data.data.content, 'base64').toString()
 	}
 
 	var iframe_html = ''
-	if (config.iframe || config.iframe_html) {
+	if (config.iframe) {
+		if (config.iframe == true) {
+			config.iframe = 'iframe.html'
+		}
 		var iframe_data = await github.repos.getContent({
 			owner: owner,
 			repo: repo_name,
@@ -185,8 +193,19 @@ async function chPage(github, owner, repo_name, yml) {
 		cubohub: cubohub
 	}
 
+	var branch = 'master'
+	if (config.branch) {
+		branch = config.branch
+	}
+
+	var dataTimeNowStr = dataTimeNow.format('m/d/Y H:M')
+	var cmessage = `Update GitHub Page: ${dataTimeNowStr}`
+	if (config.cmessage) {
+		cmessage = config.cmessage
+	}
+
 	site = site.format(info, true)
-	//chUpdateFile(github, 'index.html', site, 'TEST: UP', 'master', owner, repo_name)
+	chUpdateFile(github, 'index.html', site, cmessage, branch, owner, repo_name)
 }
 
 function chCheckXML(github, owner, repo) {
