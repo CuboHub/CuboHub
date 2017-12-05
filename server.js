@@ -20,11 +20,24 @@ app_express.get('/', function (req, res) {
 	res.send('Hello World!\nGO > htpps://CuboHub.github.io')
 })
 
+app_express.get('/api/owner/:owner/repo/:repo', function (req, res) {
+	console.log(`[+] api:rebuild ${req.params.owner}, ${req.params.repo}`)
+	var status = 'Success'
+	try {
+		app.chCheckXML(app.github, req.params.owner, req.params.repo)
+	} catch (e) {
+		console.log(`[-] Error:\n${e}\n\n`);
+		status = 'Failed'
+	}
+	var site = `{"owner": "${req.params.owner}"\n"repo": "${req.params.repo}"\n"build": "${status}"}`
+	//res.send(site)
+})
+
 webhookHandler.on('push', function (repo, data) {
 	try {
 		var repo = data.repository.name
 		var owner = data.repository.owner.name
-		console.log(`[+] webhooks:push: ${repo}, ${owner}`)
+		console.log(`[+] webhooks:push: ${owner}, ${repo}`)
 		app.chCheckXML(app.github, owner, repo)
 	} catch (e) {
 		console.log(`[-] Error:\n${e}\n\n`);

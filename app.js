@@ -30,7 +30,8 @@ function chUpdateFile(github, path, code, message, branch, owner, repo) {
 		if (res && res.data.sha) {
 			//console.log(res.data.sha)
 			var sha = res.data.sha
-			github.repos.updateFile({
+			var content = Buffer.from(res.data.content, 'base64').toString()
+			return github.repos.updateFile({
 				owner: owner,
 				repo: repo,
 				path: path,
@@ -42,7 +43,7 @@ function chUpdateFile(github, path, code, message, branch, owner, repo) {
 				//console.log(err, res)
 			})
 		} else {
-			github.repos.createFile({
+			return github.repos.createFile({
 				owner: owner,
 				repo: repo,
 				path: path,
@@ -205,12 +206,13 @@ async function chPage(github, owner, repo_name, yml) {
 	}
 
 	site = site.format(info, true)
-	chUpdateFile(github, 'index.html', site, cmessage, branch, owner, repo_name)
+	return chUpdateFile(github, 'index.html', site, cmessage, branch, owner, repo_name)
 }
 
 function chCheckXML(github, owner, repo) {
 	console.log(`[+] chCheckXML: +github, ${owner}, ${repo}`)
 	var yml = ''
+	//1
 	github.repos.getContent({
 		owner: owner,
 		repo: repo,
@@ -241,6 +243,38 @@ function chCheckXML(github, owner, repo) {
 			return chPage(github, owner, repo, yml)
 		}
 	})
+	//2
+	github.repos.getContent({
+		owner: owner,
+		repo: repo,
+		path: '.cuboHub.yml'
+	}, function (err, res) {
+		if (res) {
+			yml = Buffer.from(res.data.content, 'base64').toString()
+			return chPage(github, owner, repo, yml)
+		}
+	})
+	github.repos.getContent({
+		owner: owner,
+		repo: repo,
+		path: '.CuboHub.yml'
+	}, function (err, res) {
+		if (res) {
+			yml = Buffer.from(res.data.content, 'base64').toString()
+			return chPage(github, owner, repo, yml)
+		}
+	})
+	github.repos.getContent({
+		owner: owner,
+		repo: repo,
+		path: '.cubohub.yml'
+	}, function (err, res) {
+		if (res) {
+			yml = Buffer.from(res.data.content, 'base64').toString()
+			return chPage(github, owner, repo, yml)
+		}
+	})
+	//3
 	github.repos.getContent({
 		owner: owner,
 		repo: repo,
