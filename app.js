@@ -124,26 +124,28 @@ async function chPage(github, owner, repo_name, yml) {
 	if (config.readme) {
 		if (config.readme == true) {
 			config.readme = 'README.md'
+		} else if (!config.readme == false) {
+			var readme_data = await github.repos.getContent({
+				owner: owner,
+				repo: repo_name,
+				path: config.readme || 'README.md'
+			})
+			readme_md = Buffer.from(readme_data.data.content, 'base64').toString()
 		}
-		var readme_data = await github.repos.getContent({
-			owner: owner,
-			repo: repo_name,
-			path: config.readme || 'README.md'
-		})
-		readme_md = Buffer.from(readme_data.data.content, 'base64').toString()
 	}
 
 	var iframe_html = ''
 	if (config.iframe) {
 		if (config.iframe == true) {
 			config.iframe = 'iframe.html'
+		} else if (!config.readme == false) {
+			var iframe_data = await github.repos.getContent({
+				owner: owner,
+				repo: repo_name,
+				path: config.iframe_html || 'iframe.html'
+			})
+			iframe_html = Buffer.from(iframe_data.data.content, 'base64').toString()
 		}
-		var iframe_data = await github.repos.getContent({
-			owner: owner,
-			repo: repo_name,
-			path: config.iframe_html || 'iframe.html'
-		})
-		iframe_html = Buffer.from(iframe_data.data.content, 'base64').toString()
 	}
 
 	var readme_html = await hubdown(readme_md)
