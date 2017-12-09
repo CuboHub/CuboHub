@@ -144,7 +144,7 @@ async function chPage(github, owner, repo_name, yml) {
 		}
 		if (!config.readme == true) {
 			iframe_html = ''
-		else {
+		} else {
 			var iframe_data = await github.repos.getContent({
 				owner: owner,
 				repo: repo_name,
