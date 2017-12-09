@@ -173,11 +173,11 @@ async function chPage(github, owner, repo_name, yml) {
 		language: config.language || repo.language,
 		size: size_repo,
 		size_kb: size_repo_kb,
-		watchers: repo.watchers || 0,
-		forks_count: repo.forks_count || 0,
-		fork: repo.forks_count || 0,
-		stargazers_count: repo.stargazers_count || 0,
-		stars: repo.stargazers_count || 0,
+		watchers: repo.watchers || '0',
+		forks_count: repo.forks_count || '0',
+		fork: repo.forks_count || '0',
+		stargazers_count: repo.stargazers_count || '0',
+		stars: repo.stargazers_count || '0',
 		readme_html: readme_html || '',
 		iframe_html: iframe_html || '',
 		created_at: repo.created_at,
@@ -218,6 +218,7 @@ async function chPage(github, owner, repo_name, yml) {
 	}
 
 	site = site.format(info, true)
+
 	return chUpdateFile(github, 'index.html', site, cmessage, branch, owner, repo_name)
 }
 
