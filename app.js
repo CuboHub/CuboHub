@@ -124,7 +124,7 @@ async function chPage(github, owner, repo_name, yml) {
 	if (config.readme) {
 		if (config.readme == true) {
 			config.readme = 'README.md'
-		} else if (!config.readme == false) {
+		} else if (!config.readme == true) {
 			var readme_data = await github.repos.getContent({
 				owner: owner,
 				repo: repo_name,
@@ -138,7 +138,7 @@ async function chPage(github, owner, repo_name, yml) {
 	if (config.iframe) {
 		if (config.iframe == true) {
 			config.iframe = 'iframe.html'
-		} else if (!config.readme == false) {
+		} else if (!config.readme == true) {
 			var iframe_data = await github.repos.getContent({
 				owner: owner,
 				repo: repo_name,
