@@ -56,10 +56,10 @@ function chUpdateFile(github, path, code, message, branch, owner, repo, gitautho
 			//console.log(res.data.sha)
 			var sha = res.data.sha
 			var content = Buffer.from(res.data.content, 'base64').toString()
-			/*if (content == code) {
+			if (content == code) {
 				console.log('[+] Same updateFile')
 				return
-			}*/
+			}
 			return github.repos.updateFile({
 				owner: owner,
 				repo: repo,
@@ -71,7 +71,7 @@ function chUpdateFile(github, path, code, message, branch, owner, repo, gitautho
 				author: gitauthor,
 				committer: gitauthor
 			}, function (err, res) {
-				console.log(err, res)
+				//console.log(err, res)
 			})
 		} else {
 			return github.repos.createFile({
