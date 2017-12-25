@@ -26,6 +26,7 @@ github.authenticate({
 })
 
 async function chToken(installation_id) {
+	console.log(`[+] chToken: ${installation_id}`)
 	var cert = process.env.github_key //(fs.readFileSync('cubohub.pem')).toString()
 	var token = jwt.sign({}, cert, {
 		algorithm: 'RS256',
@@ -42,7 +43,7 @@ async function chToken(installation_id) {
 	return github
 }
 
-function chUpdateFile(github, path, code, message, branch, owner, repo) {
+function chUpdateFile(github, path, code, message, branch, owner, repo, gitauthor) {
 	console.log(`[+] chUpdateFile: +github, ${path}, +code, ${message}, ${branch}, ${owner}, ${repo}`)
 	github.repos.getContent({
 		owner: owner,
@@ -55,10 +56,10 @@ function chUpdateFile(github, path, code, message, branch, owner, repo) {
 			//console.log(res.data.sha)
 			var sha = res.data.sha
 			var content = Buffer.from(res.data.content, 'base64').toString()
-			if (content == code) {
+			/*if (content == code) {
 				console.log('[+] Same updateFile')
 				return
-			}
+			}*/
 			return github.repos.updateFile({
 				owner: owner,
 				repo: repo,
@@ -66,7 +67,9 @@ function chUpdateFile(github, path, code, message, branch, owner, repo) {
 				message: message,
 				branch: branch,
 				content: Buffer.from(code).toString('base64'),
-				sha: sha
+				sha: sha,
+				author: gitauthor,
+				committer: gitauthor
 			}, function (err, res) {
 				console.log(err, res)
 			})
@@ -77,7 +80,9 @@ function chUpdateFile(github, path, code, message, branch, owner, repo) {
 				path: path,
 				message: message,
 				branch: branch,
-				content: Buffer.from(code).toString('base64')
+				content: Buffer.from(code).toString('base64'),
+				author: gitauthor,
+				committer: gitauthor
 			}, function (err, res) {
 				//console.log(err, res)
 			})
@@ -241,9 +246,19 @@ async function chPage(github, owner, repo_name, yml) {
 		cmessage = config.cmessage
 	}
 
+	var name = 'CuboHub[Bot]'
+	var email = 'Bot@CuboHub.github.io'
+	if (config.gitauthor) {
+		if (config.gitauthor.name && config.gitauthor.email) {
+			name = config.gitauthor.name
+			email = config.gitauthor.email
+		}
+	}
+	var gitauthor = {name: name, email: email}
+
 	site = site.format(info, true)
 
-	return chUpdateFile(github, 'index.html', site, cmessage, branch, owner, repo_name)
+	return chUpdateFile(github, 'index.html', site, cmessage, branch, owner, repo_name, gitauthor)
 }
 
 function chCheckXML(github, owner, repo) {
@@ -347,7 +362,7 @@ function chCheckXML(github, owner, repo) {
 async function chInit(installation_id, owner, repo) {
 	console.log(`[+] chInit: ${installation_id}, ${owner}, ${repo}`)
 	var github = await chToken(72502)
-
+	return chCheckXML(github, owner, repo)
 }
 
 //chToken(installation_id)
@@ -359,13 +374,17 @@ async function chInit(installation_id, owner, repo) {
 //chPage(github, owner, repo, yml)
 //chPage(github, 'TiagoDanin', 'TestGithub', 'yml')
 
-//chUpdateFile(github, path, code, message, branch, owner, repo)
-//chUpdateFile(github, 'index.html', '<html><h1>Hello World!</h1></html>', 'TEST: UP', 'master', 'TiagoDanin', 'TestGithub')
+//chUpdateFile(github, path, code, message, branch, owner, repo, gitauthor)
+//chUpdateFile(github, 'index.html', '<html><h1>Hello World!</h1></html>', 'TEST: UP', 'master', 'TiagoDanin', 'TestGithub', {name: 'Bot', email: 'My@Bot.Bot'})
+
+//chInit(installation_id, owner, repo)
+//chInit(64019, 'TiagoDanin', 'TestGithub')
 
 module.exports = {
 	github,
 	chToken,
 	chCheckXML,
 	chPage,
-	chUpdateFile
+	chUpdateFile,
+	chInit
 }
