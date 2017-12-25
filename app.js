@@ -1,22 +1,46 @@
 'use strict'
 
 var Client    = require('github')
-var fs        = require('fs');
-var yaml      = require('js-yaml');
+var fs        = require('fs')
+var jwt       = require('jsonwebtoken')
+var yaml      = require('js-yaml')
 var request   = require("request-promise-native")
-var jformat   = require('jformat');
+var jformat   = require('jformat')
 var hubdown   = require('hubdown')
+var dateTime  = require('node-datetime')
 var bytelabel = require('bytelabel')
-var dateTime  = require('node-datetime');
 
 var github = new Client({
 	debug: false
 })
 
-github.authenticate({
+/*github.authenticate({
 	type: 'token',
 	token: process.env.github_token
+})*/
+
+github.authenticate({
+	type: 'oauth',
+	key: process.env.github_cid,
+	secret: process.env.github_csecret
 })
+
+async function chToken(installation_id) {
+	var cert = process.env.github_key //(fs.readFileSync('cubohub.pem')).toString()
+	var token = jwt.sign({}, cert, {
+		algorithm: 'RS256',
+		expiresIn: '2m',
+		issuer: process.env.github_app_id
+	})
+	var github = new Client({
+		debug: false
+	})
+	await github.authenticate({type: 'integration', token: token})
+	var data = await github.apps.createInstallationToken({installation_id: installation_id})
+	var new_token = data.data.token
+	await github.authenticate({ type: 'token', token: new_token})
+	return github
+}
 
 function chUpdateFile(github, path, code, message, branch, owner, repo) {
 	console.log(`[+] chUpdateFile: +github, ${path}, +code, ${message}, ${branch}, ${owner}, ${repo}`)
@@ -44,7 +68,7 @@ function chUpdateFile(github, path, code, message, branch, owner, repo) {
 				content: Buffer.from(code).toString('base64'),
 				sha: sha
 			}, function (err, res) {
-				//console.log(err, res)
+				console.log(err, res)
 			})
 		} else {
 			return github.repos.createFile({
@@ -320,6 +344,9 @@ function chCheckXML(github, owner, repo) {
 	})
 }
 
+//chToken(installation_id)
+//app.chToken(64019)
+
 //chCheckXML(github, owner, repo)
 //chCheckXML(github, 'TiagoDanin', 'TestGithub')
 
@@ -331,6 +358,7 @@ function chCheckXML(github, owner, repo) {
 
 module.exports = {
 	github,
+	chToken,
 	chCheckXML,
 	chPage,
 	chUpdateFile

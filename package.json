@@ -12,6 +12,7 @@
     "hubdown": "1.1.0",
     "jformat": "1.0.3",
     "js-yaml": "3.10.0",
+    "jsonwebtoken": "^8.1.0",
     "node-datetime": "^2.0.3",
     "request": "2.83.0",
     "request-promise-native": "1.0.5"

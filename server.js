@@ -20,7 +20,8 @@ app_express.get('/', function (req, res) {
 	res.send('Hello World!\nGO > htpps://CuboHub.github.io')
 })
 
-app_express.get('/api/owner/:owner/repo/:repo', function (req, res) {
+// API/$methoad_name/+$params/$:value
+app_express.get('/api/rebuild/owner/:owner/repo/:repo', function (req, res) {
 	console.log(`[+] api:rebuild ${req.params.owner}, ${req.params.repo}`)
 	var status = 'Success'
 	try {
@@ -31,6 +32,11 @@ app_express.get('/api/owner/:owner/repo/:repo', function (req, res) {
 	}
 	var site = `{"owner": "${req.params.owner}"\n"repo": "${req.params.repo}"\n"build": "${status}"}`
 	//res.send(site)
+})
+
+app_express.get('/api/webview/owner/:owner/repo/:repo', function (req, res) {
+	console.log(`[+] api:webview ${req.params.owner}, ${req.params.repo}`)
+	res.send('#SOON')
 })
 
 webhookHandler.on('push', function (repo, data) {
