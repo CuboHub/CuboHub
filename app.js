@@ -344,6 +344,12 @@ function chCheckXML(github, owner, repo) {
 	})
 }
 
+async function chInit(installation_id, owner, repo) {
+	console.log(`[+] chInit: ${installation_id}, ${owner}, ${repo}`)
+	var github = await chToken(72502)
+
+}
+
 //chToken(installation_id)
 //app.chToken(64019)
 

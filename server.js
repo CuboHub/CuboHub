@@ -20,12 +20,12 @@ app_express.get('/', function (req, res) {
 	res.send('Hello World!\nGO > htpps://CuboHub.github.io')
 })
 
-// API/$methoad_name/+$params/$:value
-app_express.get('/api/rebuild/owner/:owner/repo/:repo', function (req, res) {
+// API/$method_name/+$params/$:value
+app_express.get('/api/rebuild/owner/:owner/repo/:repo/installation_id/:installation_id', function (req, res) {
 	console.log(`[+] api:rebuild ${req.params.owner}, ${req.params.repo}`)
 	var status = 'Success'
 	try {
-		app.chCheckXML(app.github, req.params.owner, req.params.repo)
+		app.chInit(req.params.installation_id, req.params.owner, req.params.repo)
 	} catch (e) {
 		console.log(`[-] Error:\n${e}\n\n`);
 		status = 'Failed'
@@ -41,10 +41,11 @@ app_express.get('/api/webview/owner/:owner/repo/:repo', function (req, res) {
 
 webhookHandler.on('push', function (repo, data) {
 	try {
-		var repo = data.repository.name
+		var installation_id = data.installation.id
 		var owner = data.repository.owner.name
-		console.log(`[+] webhooks:push: ${owner}, ${repo}`)
-		app.chCheckXML(app.github, owner, repo)
+		var repo = data.repository.name
+		console.log(`[+] webhooks:push: ${installation_id}, ${owner}, ${repo}`)
+		app.chInit(installation_id, owner, repo)
 	} catch (e) {
 		console.log(`[-] Error:\n${e}\n\n`);
 	}
