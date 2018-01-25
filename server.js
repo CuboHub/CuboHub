@@ -40,7 +40,8 @@ app_express.get('/api/webview/owner/:owner/repo/:repo', function (req, res) {
 })
 
 webhookHandler.on('push', function (id, name, data) {
-	webhookHandler.sign(data)
+	var signature = webhookHandler.sign(data)
+	webhookHandler.verifyAndReceive({id, name, payload, signature})
 	try {
 		var installation_id = data.installation.id
 		var owner = data.repository.owner.name
