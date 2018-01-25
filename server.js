@@ -1,19 +1,19 @@
-const GithubWebHook = require('express-github-webhook')
+const WebhooksApi   = require('@octokit/webhooks')
 const express       = require('express')
 const https         = require('https')
 const http          = require('http')
 const app           = require('./app.js')
 const bodyParser    = require('body-parser')
 
-const webhookHandler = GithubWebHook({
+console.log('[+] Start')
+const app_express = express()
+const webhooks = new WebhooksApi({
 	path: '/webhooks',
 	secret: process.env.webhooks_secret
-});
+})
 
-console.log('[+] Start')
-const app_express = express();
 app_express.use(bodyParser.json())
-app_express.use(webhookHandler)
+app_express.use(webhooks.middleware)
 app_express.set('port', process.env.PORT)
 
 app_express.get('/', function (req, res) {
@@ -39,17 +39,17 @@ app_express.get('/api/webview/owner/:owner/repo/:repo', function (req, res) {
 	res.send('#SOON')
 })
 
-webhookHandler.on('push', function (repo, data) {
+webhookHandler.on('push', ({id, name, payload}) => {
 	try {
-		var installation_id = data.installation.id
-		var owner = data.repository.owner.name
-		var repo = data.repository.name
+		var installation_id = payload.installation.id
+		var owner = payload.repository.owner.name
+		var repo = payload.repository.name
 		console.log(`[+] webhooks:push: ${installation_id}, ${owner}, ${repo}`)
 		app.chInit(installation_id, owner, repo)
 	} catch (e) {
-		console.log(`[-] Error:\n${e}\n\n`);
+		console.log(`[-] Error:\n${e}\n\n`)
 	}
-});
+})
 
 var web = http
 if (process.env.web_protocol && process.env.web_protocol == 'https') {
