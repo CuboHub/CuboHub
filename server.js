@@ -1,4 +1,4 @@
-const GithubWebHook = require('@octokit/webhooks')
+const GithubWebHook = require('express-github-webhook')
 const express       = require('express')
 const https         = require('https')
 const http          = require('http')
@@ -13,7 +13,7 @@ const webhookHandler = GithubWebHook({
 console.log('[+] Start')
 const app_express = express();
 app_express.use(bodyParser.json())
-app_express.use(webhookHandler.middleware)
+app_express.use(webhookHandler)
 app_express.set('port', process.env.PORT)
 
 app_express.get('/', function (req, res) {
@@ -39,9 +39,7 @@ app_express.get('/api/webview/owner/:owner/repo/:repo', function (req, res) {
 	res.send('#SOON')
 })
 
-webhookHandler.on('push', function (id, name, data) {
-	var signature = webhookHandler.sign(data)
-	webhookHandler.verifyAndReceive({id, name, data, signature})
+webhookHandler.on('push', function (repo, data) {
 	try {
 		var installation_id = data.installation.id
 		var owner = data.repository.owner.name
