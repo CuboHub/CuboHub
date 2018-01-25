@@ -46,6 +46,7 @@ webhookHandler.on('push', function (id, name, data) {
 		var repo = data.repository.name
 		console.log(`[+] webhooks:push: ${installation_id}, ${owner}, ${repo}`)
 		app.chInit(installation_id, owner, repo)
+		webhooks.receive(id, name, data)
 	} catch (e) {
 		console.log(`[-] Error:\n${e}\n\n`);
 	}
