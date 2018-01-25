@@ -9,7 +9,7 @@
     "bytelabel": "2.0.2",
     "express": "4.16.2",
     "express-github-webhook": "1.0.6",
-    "hubdown": "1.1.0",
+    "hubdown": "2.0.0",
     "jformat": "1.0.4",
     "js-yaml": "3.10.0",
     "jsonwebtoken": "8.1.0",
