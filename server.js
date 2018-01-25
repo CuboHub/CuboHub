@@ -39,7 +39,7 @@ app_express.get('/api/webview/owner/:owner/repo/:repo', function (req, res) {
 	res.send('#SOON')
 })
 
-webhookHandler.on('push', ({id, name, payload}) => {
+webhooks.on('push', ({id, name, payload}) => {
 	try {
 		var installation_id = payload.installation.id
 		var owner = payload.repository.owner.name
