@@ -40,13 +40,13 @@ app_express.get('/api/webview/owner/:owner/repo/:repo', function (req, res) {
 })
 
 webhookHandler.on('push', function (id, name, data) {
+	webhookHandler.sign(data)
 	try {
 		var installation_id = data.installation.id
 		var owner = data.repository.owner.name
 		var repo = data.repository.name
 		console.log(`[+] webhooks:push: ${installation_id}, ${owner}, ${repo}`)
 		app.chInit(installation_id, owner, repo)
-		webhookHandler.receive({id, name, data})
 	} catch (e) {
 		console.log(`[-] Error:\n${e}\n\n`);
 	}
