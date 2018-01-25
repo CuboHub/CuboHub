@@ -365,6 +365,9 @@ function chCheckXML(github, owner, repo) {
 }
 
 async function chInit(installation_id, owner, repo) {
+	if (process.env.owner && owner == process.env.owner) {
+		installation_id = 1
+	}
 	console.log(`[+] chInit: ${installation_id}, ${owner}, ${repo}`)
 	var github = await chAuth(installation_id)
 	return chCheckXML(github, owner, repo)
