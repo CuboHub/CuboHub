@@ -10,36 +10,41 @@ const hubdown   = require('hubdown')
 const dateTime  = require('node-datetime')
 const bytelabel = require('bytelabel')
 
-const github = new Client({
+var github = new Client({
 	debug: false
 })
 
-/*github.authenticate({
-	type: 'token',
-	token: process.env.github_token
-})*/
-
-/*github.authenticate({
-	type: 'oauth',
-	key: process.env.github_cid,
-	secret: process.env.github_csecret
-})*/
-
-async function chToken(installation_id) {
-	console.log(`[+] chToken: ${installation_id}`)
-	var cert = process.env.github_key //(fs.readFileSync('cubohub.pem')).toString()
-	var token = jwt.sign({}, cert, {
-		algorithm: 'RS256',
-		expiresIn: '2m',
-		issuer: process.env.github_app_id
-	})
+async function chAuth(installation_id) {
+	console.log(`[+] chAuth: ${installation_id}`)
 	var github = new Client({
 		debug: false
 	})
-	await github.authenticate({type: 'integration', token: token})
-	var data = await github.apps.createInstallationToken({installation_id: installation_id})
-	var new_token = data.data.token
-	await github.authenticate({ type: 'token', token: new_token})
+
+	if (installation_id == 1 && process.env.github_token) {
+		github.authenticate({
+			type: 'token',
+			token: process.env.github_token
+		})
+
+	} else if (installation_id == 2 && process.env.github_cid && process.env.github_csecret) {
+		github.authenticate({
+			type: 'oauth',
+			key: process.env.github_cid,
+			secret: process.env.github_csecret
+		})
+
+	} else {
+		var cert = process.env.github_key //(fs.readFileSync('cubohub.pem')).toString()
+		var token = jwt.sign({}, cert, {
+			algorithm: 'RS256',
+			expiresIn: '2m',
+			issuer: process.env.github_app_id
+		})
+		await github.authenticate({type: 'integration', token: token})
+		var data = await github.apps.createInstallationToken({installation_id: installation_id})
+		var new_token = data.data.token
+		await github.authenticate({ type: 'token', token: new_token})
+	}
 	return github
 }
 
@@ -361,12 +366,12 @@ function chCheckXML(github, owner, repo) {
 
 async function chInit(installation_id, owner, repo) {
 	console.log(`[+] chInit: ${installation_id}, ${owner}, ${repo}`)
-	var github = await chToken(installation_id)
+	var github = await chAuth(installation_id)
 	return chCheckXML(github, owner, repo)
 }
 
-//chToken(installation_id)
-//app.chToken(64019)
+//chAuth(installation_id)
+//app.chAuth(64019)
 
 //chCheckXML(github, owner, repo)
 //chCheckXML(github, 'TiagoDanin', 'TestGithub')
@@ -382,7 +387,7 @@ async function chInit(installation_id, owner, repo) {
 
 module.exports = {
 	github,
-	chToken,
+	chAuth,
 	chCheckXML,
 	chPage,
 	chUpdateFile,

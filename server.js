@@ -5,13 +5,13 @@ const http          = require('http')
 const app           = require('./app.js')
 const bodyParser    = require('body-parser')
 
-var webhookHandler = GithubWebHook({
+const webhookHandler = GithubWebHook({
 	path: '/webhooks',
 	secret: process.env.webhooks_secret
 });
 
 console.log('[+] Start')
-var app_express = express();
+const app_express = express();
 app_express.use(bodyParser.json())
 app_express.use(webhookHandler)
 app_express.set('port', process.env.PORT)
