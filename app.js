@@ -1,16 +1,16 @@
 'use strict'
 
-var Client    = require('github')
-var fs        = require('fs')
-var jwt       = require('jsonwebtoken')
-var yaml      = require('js-yaml')
-var request   = require("request-promise-native")
-var jformat   = require('jformat')
-var hubdown   = require('hubdown')
-var dateTime  = require('node-datetime')
-var bytelabel = require('bytelabel')
+const Client    = require('@octokit/rest')
+const fs        = require('fs')
+const jwt       = require('jsonwebtoken')
+const yaml      = require('js-yaml')
+const request   = require("request-promise-native")
+const jformat   = require('jformat')
+const hubdown   = require('hubdown')
+const dateTime  = require('node-datetime')
+const bytelabel = require('bytelabel')
 
-var github = new Client({
+const github = new Client({
 	debug: false
 })
 
@@ -19,11 +19,11 @@ var github = new Client({
 	token: process.env.github_token
 })*/
 
-github.authenticate({
+/*github.authenticate({
 	type: 'oauth',
 	key: process.env.github_cid,
 	secret: process.env.github_csecret
-})
+})*/
 
 async function chToken(installation_id) {
 	console.log(`[+] chToken: ${installation_id}`)
