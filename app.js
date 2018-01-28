@@ -9,13 +9,16 @@ const jformat = require('jformat')
 const hubdown = require('hubdown')
 const dateTime = require('node-datetime')
 const bytelabel = require('bytelabel')
+const debug = require('debug')
+
+const log = debug('CuboHub')
 
 var github = new Client({
 	debug: false
 })
 
 async function chAuth(installation_id) {
-	console.log(`[+] chAuth: ${installation_id}`)
+	log(`[+] chAuth: ${installation_id}`)
 	var github = new Client({
 		debug: false
 	})
@@ -57,20 +60,20 @@ async function chAuth(installation_id) {
 }
 
 function chUpdateFile(github, path, code, message, branch, owner, repo, gitauthor) {
-	console.log(`[+] chUpdateFile: +github, ${path}, +code, ${message}, ${branch}, ${owner}, ${repo}`)
+	log(`[+] chUpdateFile: +github, ${path}, +code, ${message}, ${branch}, ${owner}, ${repo}`)
 	github.repos.getContent({
 		owner: owner,
 		repo: repo,
 		path: path,
 		ref: 'refs/heads/' + branch + ''
 	}, function(err, res) {
-		//console.log(err, res)
+		//log(err, res)
 		if (res && res.data.sha) {
-			//console.log(res.data.sha)
+			//log(res.data.sha)
 			var sha = res.data.sha
 			var content = Buffer.from(res.data.content, 'base64').toString()
 			if (content == code) {
-				console.log('[+] Same updateFile')
+				log('[+] Same updateFile')
 				return
 			}
 			return github.repos.updateFile({
@@ -84,7 +87,7 @@ function chUpdateFile(github, path, code, message, branch, owner, repo, gitautho
 				author: gitauthor,
 				committer: gitauthor
 			}, function(err, res) {
-				//console.log(err, res)
+				//log(err, res)
 			})
 		} else {
 			return github.repos.createFile({
@@ -97,14 +100,14 @@ function chUpdateFile(github, path, code, message, branch, owner, repo, gitautho
 				author: gitauthor,
 				committer: gitauthor
 			}, function(err, res) {
-				//console.log(err, res)
+				//log(err, res)
 			})
 		}
 	})
 }
 
 async function chPage(github, owner, repo_name, yml) {
-	console.log(`[+] chPage: +github, ${owner}, ${repo_name}, +yml`)
+	log(`[+] chPage: +github, ${owner}, ${repo_name}, +yml`)
 	var dataTimeNow = dateTime.create();
 	var config = yaml.safeLoad(yml);
 
@@ -283,7 +286,7 @@ async function chPage(github, owner, repo_name, yml) {
 }
 
 function chCheckXML(github, owner, repo) {
-	console.log(`[+] chCheckXML: +github, ${owner}, ${repo}`)
+	log(`[+] chCheckXML: +github, ${owner}, ${repo}`)
 	var yml = ''
 		//1
 	github.repos.getContent({
@@ -384,7 +387,7 @@ async function chInit(installation_id, owner, repo) {
 	if (process.env.owner && owner == process.env.owner) {
 		installation_id = 1
 	}
-	console.log(`[+] chInit: ${installation_id}, ${owner}, ${repo}`)
+	log(`[+] chInit: ${installation_id}, ${owner}, ${repo}`)
 	var github = await chAuth(installation_id)
 	return chCheckXML(github, owner, repo)
 }
@@ -393,7 +396,7 @@ async function chUpdateAllRepo(installation_id, owner) {
 	if (process.env.owner && owner == process.env.owner) {
 		installation_id = 1
 	}
-	console.log(`[+] chUpdateAllRepo: ${installation_id}, ${owner}`)
+	log(`[+] chUpdateAllRepo: ${installation_id}, ${owner}`)
 	var github = await chAuth(installation_id)
 	var result = await github.repos.getForUser({
 		username:'TiagoDanin',
