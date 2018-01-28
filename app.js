@@ -1,13 +1,13 @@
 'use strict'
 
-const Client    = require('@octokit/rest')
-const fs        = require('fs')
-const jwt       = require('jsonwebtoken')
-const yaml      = require('js-yaml')
-const request   = require("request-promise-native")
-const jformat   = require('jformat')
-const hubdown   = require('hubdown')
-const dateTime  = require('node-datetime')
+const Client = require('@octokit/rest')
+const fs = require('fs')
+const jwt = require('jsonwebtoken')
+const yaml = require('js-yaml')
+const request = require("request-promise-native")
+const jformat = require('jformat')
+const hubdown = require('hubdown')
+const dateTime = require('node-datetime')
 const bytelabel = require('bytelabel')
 
 var github = new Client({
@@ -40,10 +40,18 @@ async function chAuth(installation_id) {
 			expiresIn: '2m',
 			issuer: process.env.github_app_id
 		})
-		await github.authenticate({type: 'integration', token: token})
-		var data = await github.apps.createInstallationToken({installation_id: installation_id})
+		await github.authenticate({
+			type: 'integration',
+			token: token
+		})
+		var data = await github.apps.createInstallationToken({
+			installation_id: installation_id
+		})
 		var new_token = data.data.token
-		await github.authenticate({ type: 'token', token: new_token})
+		await github.authenticate({
+			type: 'token',
+			token: new_token
+		})
 	}
 	return github
 }
@@ -55,7 +63,7 @@ function chUpdateFile(github, path, code, message, branch, owner, repo, gitautho
 		repo: repo,
 		path: path,
 		ref: 'refs/heads/' + branch + ''
-	}, function (err, res) {
+	}, function(err, res) {
 		//console.log(err, res)
 		if (res && res.data.sha) {
 			//console.log(res.data.sha)
@@ -75,7 +83,7 @@ function chUpdateFile(github, path, code, message, branch, owner, repo, gitautho
 				sha: sha,
 				author: gitauthor,
 				committer: gitauthor
-			}, function (err, res) {
+			}, function(err, res) {
 				//console.log(err, res)
 			})
 		} else {
@@ -88,7 +96,7 @@ function chUpdateFile(github, path, code, message, branch, owner, repo, gitautho
 				content: Buffer.from(code).toString('base64'),
 				author: gitauthor,
 				committer: gitauthor
-			}, function (err, res) {
+			}, function(err, res) {
 				//console.log(err, res)
 			})
 		}
@@ -151,7 +159,10 @@ async function chPage(github, owner, repo_name, yml) {
 	var links_html = ''
 	for (var index in links) {
 		var url = links[index]
-		links_html += link.format({url: url, title: index}, true) + '\n'
+		links_html += link.format({
+			url: url,
+			title: index
+		}, true) + '\n'
 	}
 
 	var readme_md = ''
@@ -193,7 +204,9 @@ async function chPage(github, owner, repo_name, yml) {
 	var content_html = readme_html + iframe_html
 
 	var size_repo_kb = (config.size || repo.size) * 1024
-	var size_repo = bytelabel(size_repo_kb, {round: true})
+	var size_repo = bytelabel(size_repo_kb, {
+		round: true
+	})
 
 	var info = {
 		id: repo.id,
@@ -259,7 +272,10 @@ async function chPage(github, owner, repo_name, yml) {
 			email = config.gitauthor.email
 		}
 	}
-	var gitauthor = {name: name, email: email}
+	var gitauthor = {
+		name: name,
+		email: email
+	}
 
 	site = site.format(info, true)
 
@@ -269,12 +285,12 @@ async function chPage(github, owner, repo_name, yml) {
 function chCheckXML(github, owner, repo) {
 	console.log(`[+] chCheckXML: +github, ${owner}, ${repo}`)
 	var yml = ''
-	//1
+		//1
 	github.repos.getContent({
 		owner: owner,
 		repo: repo,
 		path: '.github/cuboHub.yml'
-	}, function (err, res) {
+	}, function(err, res) {
 		if (res) {
 			yml = Buffer.from(res.data.content, 'base64').toString()
 			return chPage(github, owner, repo, yml)
@@ -284,28 +300,28 @@ function chCheckXML(github, owner, repo) {
 		owner: owner,
 		repo: repo,
 		path: '.github/CuboHub.yml'
-	}, function (err, res) {
+	}, function(err, res) {
 		if (res) {
 			yml = Buffer.from(res.data.content, 'base64').toString()
 			return chPage(github, owner, repo, yml)
 		}
 	})
 	github.repos.getContent({
-		owner: owner,
-		repo: repo,
-		path: '.github/cubohub.yml'
-	}, function (err, res) {
-		if (res) {
-			yml = Buffer.from(res.data.content, 'base64').toString()
-			return chPage(github, owner, repo, yml)
-		}
-	})
-	//2
+			owner: owner,
+			repo: repo,
+			path: '.github/cubohub.yml'
+		}, function(err, res) {
+			if (res) {
+				yml = Buffer.from(res.data.content, 'base64').toString()
+				return chPage(github, owner, repo, yml)
+			}
+		})
+		//2
 	github.repos.getContent({
 		owner: owner,
 		repo: repo,
 		path: '.cuboHub.yml'
-	}, function (err, res) {
+	}, function(err, res) {
 		if (res) {
 			yml = Buffer.from(res.data.content, 'base64').toString()
 			return chPage(github, owner, repo, yml)
@@ -315,28 +331,28 @@ function chCheckXML(github, owner, repo) {
 		owner: owner,
 		repo: repo,
 		path: '.CuboHub.yml'
-	}, function (err, res) {
+	}, function(err, res) {
 		if (res) {
 			yml = Buffer.from(res.data.content, 'base64').toString()
 			return chPage(github, owner, repo, yml)
 		}
 	})
 	github.repos.getContent({
-		owner: owner,
-		repo: repo,
-		path: '.cubohub.yml'
-	}, function (err, res) {
-		if (res) {
-			yml = Buffer.from(res.data.content, 'base64').toString()
-			return chPage(github, owner, repo, yml)
-		}
-	})
-	//3
+			owner: owner,
+			repo: repo,
+			path: '.cubohub.yml'
+		}, function(err, res) {
+			if (res) {
+				yml = Buffer.from(res.data.content, 'base64').toString()
+				return chPage(github, owner, repo, yml)
+			}
+		})
+		//3
 	github.repos.getContent({
 		owner: owner,
 		repo: repo,
 		path: 'cuboHub.yml'
-	}, function (err, res) {
+	}, function(err, res) {
 		if (res) {
 			yml = Buffer.from(res.data.content, 'base64').toString()
 			return chPage(github, owner, repo, yml)
@@ -346,7 +362,7 @@ function chCheckXML(github, owner, repo) {
 		owner: owner,
 		repo: repo,
 		path: 'CuboHub.yml'
-	}, function (err, res) {
+	}, function(err, res) {
 		if (res) {
 			yml = Buffer.from(res.data.content, 'base64').toString()
 			return chPage(github, owner, repo, yml)
@@ -356,7 +372,7 @@ function chCheckXML(github, owner, repo) {
 		owner: owner,
 		repo: repo,
 		path: 'cubohub.yml'
-	}, function (err, res) {
+	}, function(err, res) {
 		if (res) {
 			yml = Buffer.from(res.data.content, 'base64').toString()
 			return chPage(github, owner, repo, yml)
@@ -371,6 +387,21 @@ async function chInit(installation_id, owner, repo) {
 	console.log(`[+] chInit: ${installation_id}, ${owner}, ${repo}`)
 	var github = await chAuth(installation_id)
 	return chCheckXML(github, owner, repo)
+}
+
+async function chUpdateAllRepo(installation_id, owner) {
+	if (process.env.owner && owner == process.env.owner) {
+		installation_id = 1
+	}
+	console.log(`[+] chUpdateAllRepo: ${installation_id}, ${owner}`)
+	var github = await chAuth(installation_id)
+	var result = await github.repos.getForUser({
+		username:'TiagoDanin',
+		per_page:100
+	})
+	result.data.forEach(repo => {
+		chCheckXML(github, owner, repo.name)
+	})
 }
 
 //chAuth(installation_id)
@@ -388,11 +419,15 @@ async function chInit(installation_id, owner, repo) {
 //chInit(installation_id, owner, repo)
 //chInit(64019, 'TiagoDanin', 'TestGithub')
 
+//chUpdateAllRepo(installation_id, owner)
+//chUpdateAllRepo(1, 'TiagoDanin')
+
 module.exports = {
 	github,
 	chAuth,
 	chCheckXML,
 	chPage,
 	chUpdateFile,
-	chInit
+	chInit,
+	chUpdateAllRepo
 }
