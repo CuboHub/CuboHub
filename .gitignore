@@ -59,7 +59,7 @@ typings/
 .env
 
 # Project
-EnvPS.ps1
+.env
 *.html
 test.js
 cubohub.pem
