@@ -77,10 +77,10 @@ function chUpdateFile(github, path, code, message, branch, owner, repo, gitautho
 			content: Buffer.from(code).toString('base64'),
 		}
 		if (gitauthor && gitauthor.name == 'CuboHub[Bot]') {
-			param.author: gitauthor
+			param.author = gitauthor
 		} else if (gitauthor) {
-			param.author: gitauthor
-			param.committer: gitauthor
+			param.author = gitauthor
+			param.committer = gitauthor
 		}
 		if (res && res.data.sha) {
 			//log(res.data.sha)
