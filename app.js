@@ -68,6 +68,20 @@ function chUpdateFile(github, path, code, message, branch, owner, repo, gitautho
 		ref: 'refs/heads/' + branch + ''
 	}, function(err, res) {
 		//log(err, res)
+		var param = {
+			owner: owner,
+			repo: repo,
+			path: path,
+			message: message,
+			branch: branch,
+			content: Buffer.from(code).toString('base64'),
+		}
+		if (gitauthor && gitauthor.name == 'CuboHub[Bot]') {
+			param.author: gitauthor
+		} else if (gitauthor) {
+			param.author: gitauthor
+			param.committer: gitauthor
+		}
 		if (res && res.data.sha) {
 			//log(res.data.sha)
 			var sha = res.data.sha
@@ -76,30 +90,12 @@ function chUpdateFile(github, path, code, message, branch, owner, repo, gitautho
 				log('[+] Same updateFile')
 				return
 			}
-			return github.repos.updateFile({
-				owner: owner,
-				repo: repo,
-				path: path,
-				message: message,
-				branch: branch,
-				content: Buffer.from(code).toString('base64'),
-				sha: sha,
-				author: gitauthor,
-				committer: gitauthor
-			}, function(err, res) {
+			param.sha = sha
+			return github.repos.updateFile(param, function(err, res) {
 				//log(err, res)
 			})
 		} else {
-			return github.repos.createFile({
-				owner: owner,
-				repo: repo,
-				path: path,
-				message: message,
-				branch: branch,
-				content: Buffer.from(code).toString('base64'),
-				author: gitauthor,
-				committer: gitauthor
-			}, function(err, res) {
+			return github.repos.createFile(param, function(err, res) {
 				//log(err, res)
 			})
 		}
@@ -281,7 +277,6 @@ async function chPage(github, owner, repo_name, yml) {
 	}
 
 	site = site.format(info, true)
-
 	return chUpdateFile(github, 'index.html', site, cmessage, branch, owner, repo_name, gitauthor)
 }
 
