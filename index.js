@@ -172,7 +172,7 @@ async function chPage(github, owner, repo_name, yml, returnHTML) {
 		if (!config.readme == true) {
 			readme_md == ''
 		} else {
-			readme_data = await github.repos.getContent({
+			var readme_data = await github.repos.getContent({
 				owner: owner,
 				repo: repo_name,
 				path: config.readme || 'README.md'
