@@ -2,12 +2,12 @@ const GithubWebHook = require('express-github-webhook')
 const express = require('express')
 const https = require('https')
 const http = require('http')
-const app = require('./app.js')
+const app = require('./index.js')
+const api = require('./api.js')
 const bodyParser = require('body-parser')
-
 const debug = require('debug')
 
-const log = debug('Server')
+const log = debug('CuboHub:Server')
 
 const webhookHandler = GithubWebHook({
 	path: '/webhooks',
@@ -20,27 +20,18 @@ app_express.use(bodyParser.json())
 app_express.use(webhookHandler)
 app_express.set('port', process.env.PORT)
 
+//Home
+//get:/
 app_express.get('/', function(req, res) {
 	res.send('Hello World!\nGO > htpps://CuboHub.github.io')
 })
 
-// API/$method_name/+$params/$:value
-app_express.get('/api/rebuild/owner/:owner/repo/:repo/installation_id/:installation_id', function(req, res) {
-	log(`[+] api:rebuild ${req.params.owner}, ${req.params.repo}`)
-	var status = 'Success'
-	try {
-		app.chInit(req.params.installation_id, req.params.owner, req.params.repo)
-	} catch (e) {
-		log(`[-] Error:\n${e}\n\n`);
-		status = 'Failed'
-	}
-	var site = `{"owner": "${req.params.owner}"\n"repo": "${req.params.repo}"\n"build": "${status}"}`
-		//res.send(site)
-})
-
-app_express.get('/api/webview/owner/:owner/repo/:repo', function(req, res) {
-	log(`[+] api:webview ${req.params.owner}, ${req.params.repo}`)
-	res.send('#SOON')
+//API- webview
+//get:/api/webview/owner/TiagoDanin/repo/TestGithub/theme/Elate
+app_express.get('/api/webview/owner/:owner/repo/:repo/theme/:theme', async function(req, res) {
+	log(`[+] api:webview ${req.params.owner}, ${req.params.repo}, ${req.params.theme}`)
+	var html = await api.webview(req.params.owner, req.params.repo, req.params.theme)
+	res.send(html)
 })
 
 webhookHandler.on('push', function(repo, data) {
@@ -54,11 +45,6 @@ webhookHandler.on('push', function(repo, data) {
 		log(`[-] Error:\n${e}\n\n`);
 	}
 });
-
-var web = http
-if (process.env.web_protocol && process.env.web_protocol == 'https') {
-	web = https
-}
 
 app_express.listen(app_express.get('port'), function() {
 	log('[+] Port: ', app_express.get('port'))
