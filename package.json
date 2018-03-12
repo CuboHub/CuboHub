@@ -15,7 +15,7 @@
     "js-yaml": "3.11.0",
     "jsonwebtoken": "8.2.0",
     "node-datetime": "2.0.6",
-    "request": "2.83.0",
+    "request": "2.85.0",
     "request-promise-native": "1.0.5"
   },
   "devDependencies": {},
