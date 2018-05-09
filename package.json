@@ -10,7 +10,7 @@
     "debug": "3.1.0",
     "express": "4.16.3",
     "express-github-webhook": "1.0.6",
-    "hubdown": "1.1.0",
+    "hubdown": "2.0.2",
     "jformat": "1.0.4",
     "js-yaml": "3.11.0",
     "jsonwebtoken": "8.2.0",
