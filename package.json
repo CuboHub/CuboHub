@@ -1,6 +1,6 @@
 {
   "name": "cubohub",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "description": "Automating page generation for GitHub!",
   "main": "index.js",
   "dependencies": {
@@ -15,8 +15,8 @@
     "js-yaml": "3.12.0",
     "jsonwebtoken": "8.3.0",
     "node-datetime": "2.0.9",
-    "node-fetch": "^2.2.0",
-    "request": "2.87.0",
+    "node-fetch": "2.2.0",
+    "request": "2.88.0",
     "request-promise-native": "1.0.5"
   },
   "devDependencies": {},
