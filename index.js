@@ -333,7 +333,7 @@ async function chUpdateAllRepo(installation_id, owner) {
 	log(`[+] chUpdateAllRepo: ${installation_id}, ${owner}`)
 	var github = await chAuth(installation_id)
 	var result = await github.repos.getForUser({
-		username: 'TiagoDanin',
+		username: owner,
 		per_page: 100
 	})
 	result.data.forEach(repo => {
