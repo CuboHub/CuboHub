@@ -4,7 +4,7 @@
   "description": "Automating page generation for GitHub!",
   "main": "index.js",
   "dependencies": {
-    "@octokit/rest": "15.11.1",
+    "@octokit/rest": "15.11.2",
     "@octokit/webhooks": "5.0.1",
     "bytelabel": "2.0.2",
     "debug": "4.0.0",
