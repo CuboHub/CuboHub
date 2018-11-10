@@ -192,7 +192,7 @@ async function chPage(github, owner, repo_name, yml, returnHTML) {
 			var iframe_data = await github.repos.getContent({
 				owner: owner,
 				repo: repo_name,
-				path: config.iframe_html || 'iframe.html'
+				path: config.iframe || 'iframe.html'
 			})
 			iframe_html = Buffer.from(iframe_data.data.content, 'base64').toString()
 		}
