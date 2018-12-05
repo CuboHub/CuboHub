@@ -28,14 +28,12 @@ async function chAuth(installation_id) {
 			type: 'token',
 			token: process.env.github_token
 		})
-
 	} else if (installation_id == 2 && process.env.github_cid && process.env.github_csecret) {
 		github.authenticate({
 			type: 'oauth',
 			key: process.env.github_cid,
 			secret: process.env.github_csecret
 		})
-
 	} else {
 		var cert = process.env.github_key //(fs.readFileSync('cubohub.pem')).toString()
 		var token = jwt.sign({}, cert, {
@@ -61,13 +59,12 @@ async function chAuth(installation_id) {
 
 function chUpdateFile(github, path, code, message, branch, owner, repo, gitauthor) {
 	log(`[+] chUpdateFile: +github, ${path}, +code, ${message}, ${branch}, ${owner}, ${repo}`)
-	github.repos.getContent({
+	github.repos.getContents({
 		owner: owner,
 		repo: repo,
 		path: path,
 		ref: 'refs/heads/' + branch + ''
-	}, function(err, res) {
-		//log(err, res)
+	}).then((res) => {
 		var param = {
 			owner: owner,
 			repo: repo,
@@ -91,13 +88,9 @@ function chUpdateFile(github, path, code, message, branch, owner, repo, gitautho
 				return
 			}
 			param.sha = sha
-			return github.repos.updateFile(param, function(err, res) {
-				//log(err, res)
-			})
+			return github.repos.updateFile(param)
 		} else {
-			return github.repos.createFile(param, function(err, res) {
-				//log(err, res)
-			})
+			return github.repos.createFile(param)
 		}
 	})
 }
@@ -172,7 +165,7 @@ async function chPage(github, owner, repo_name, yml, returnHTML) {
 		if (!config.readme == true) {
 			readme_md == ''
 		} else {
-			var readme_data = await github.repos.getContent({
+			var readme_data = await github.repos.getContents({
 				owner: owner,
 				repo: repo_name,
 				path: config.readme || 'README.md'
@@ -189,7 +182,7 @@ async function chPage(github, owner, repo_name, yml, returnHTML) {
 		if (!config.iframe == true) {
 			iframe_html = ''
 		} else {
-			var iframe_data = await github.repos.getContent({
+			var iframe_data = await github.repos.getContents({
 				owner: owner,
 				repo: repo_name,
 				path: config.iframe || 'iframe.html'
@@ -277,6 +270,7 @@ async function chPage(github, owner, repo_name, yml, returnHTML) {
 	}
 
 	site = site.format(info, true)
+
 	if (returnHTML) {
 		return site
 	} else {
@@ -287,15 +281,17 @@ async function chPage(github, owner, repo_name, yml, returnHTML) {
 function chCheckXML(github, owner, repo, path) {
 	log(`[+] chCheckXML: +github, ${owner}, ${repo}, ${path}`)
 	var yml = ''
-	github.repos.getContent({
+	github.repos.getContents({
 		owner: owner,
 		repo: repo,
 		path: path
-	}, function(err, res) {
+	}).then((res) => {
 		if (res) {
 			yml = Buffer.from(res.data.content, 'base64').toString()
 			return chPage(github, owner, repo, yml, false)
 		}
+	}).catch((e) => {
+		log(`[+] chCheckXML (not found): +github, ${owner}, ${repo}, ${path}`)
 	})
 }
 
@@ -332,10 +328,10 @@ async function chUpdateAllRepo(installation_id, owner) {
 	}
 	log(`[+] chUpdateAllRepo: ${installation_id}, ${owner}`)
 	var github = await chAuth(installation_id)
-	var result = await github.repos.getForUser({
+	var result = await github.repos.listForUser({
 		username: owner,
 		per_page: 100
-	})
+	}).catch(() => {})
 	result.data.forEach(repo => {
 		chCheckAllXML(github, owner, repo.name)
 	})

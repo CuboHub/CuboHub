@@ -1,8 +1,42 @@
 {
   "name": "cubohub",
-  "version": "1.3.0",
-  "description": "Automating page generation for GitHub!",
   "main": "index.js",
+  "version": "1.4.0",
+  "description": "Automating page generation for GitHub!",
+  "author": {
+    "name": "Tiago Danin",
+    "email": "TiagoDanin@outlook.com",
+    "url": "https://TiagoDanin.github.io"
+  },
+  "license": "GPL-3.0",
+  "keywords": [
+    "ghpages",
+    "generation",
+    "github",
+    "bot",
+    "html",
+    "git"
+  ],
+  "scripts": {
+    "test": "npm start && npm app",
+    "start": "node server.js",
+    "app": "node index.js"
+  },
+  "private": false,
+  "homepage": "https://github.com/CuboHub/CuboHub#readme",
+  "github": {
+    "name": "CuboHub",
+    "owner": "CuboHub"
+  },
+  "files": [
+    "LICENSE",
+    "Procfile",
+    "README.md",
+    "api.js",
+    "index.js",
+    "package.json",
+    "server.js"
+  ],
   "dependencies": {
     "@octokit/rest": "16.1.0",
     "@octokit/webhooks": "5.0.2",
@@ -10,7 +44,7 @@
     "debug": "4.1.0",
     "express": "4.16.4",
     "express-github-webhook": "1.0.6",
-    "hubdown": "1.1.0",
+    "hubdown": "2.1.0",
     "jformat": "1.0.4",
     "js-yaml": "3.12.0",
     "jsonwebtoken": "8.4.0",
@@ -19,26 +53,5 @@
     "request": "2.88.0",
     "request-promise-native": "1.0.5"
   },
-  "devDependencies": {},
-  "scripts": {
-    "test": "npm start && npm app",
-    "start": "node server.js",
-    "app": "node index.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/CuboHub/CuboHub.git"
-  },
-  "author": "Tiago Danin <TiagoDanin@outlook.com> (https://TiagoDanin.github.io)",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/CuboHub/CuboHub/issues"
-  },
-  "homepage": "https://github.com/CuboHub/CuboHub#readme",
-  "keywords": [
-    "github",
-    "bot",
-    "html",
-    "git"
-  ]
+  "devDependencies": {}
 }
