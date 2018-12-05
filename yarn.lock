@@ -498,9 +498,10 @@ http-signature@~1.2.0:
     jsprim "^1.2.2"
     sshpk "^1.7.0"
 
-hubdown@^2.1.0:
+hubdown@2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/hubdown/-/hubdown-2.1.0.tgz#56944558e5ee940e3d35f75af4fc435f73e77fc7"
+  integrity sha512-7ThXpbdSJo8qBYuaQXBy6YfFidlhx4fdS5I9az5S1FkLpsVf16Sz8S7CUtf4TeeIPvGOHOjoHoRysB8ZqriR0A==
   dependencies:
     gray-matter "^3.0.7"
     pify "^3.0.0"
@@ -622,9 +623,10 @@ json-stringify-safe@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
 
-jsonwebtoken@8.4.0:
+jsonwebtoken@^8.4.0:
   version "8.4.0"
   resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-8.4.0.tgz#8757f7b4cb7440d86d5e2f3becefa70536c8e46a"
+  integrity sha512-coyXjRTCy0pw5WYBpMvWOMN+Kjaik2MwTUIq9cna/W7NpO9E+iYbumZONAz3hcr+tXFJECoQVrtmIoC3Oz0gvg==
   dependencies:
     jws "^3.1.5"
     lodash.includes "^4.3.0"

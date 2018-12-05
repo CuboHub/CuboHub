@@ -1,7 +1,7 @@
 {
   "name": "cubohub",
   "main": "index.js",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Automating page generation for GitHub!",
   "author": {
     "name": "Tiago Danin",
