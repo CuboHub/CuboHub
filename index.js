@@ -36,33 +36,7 @@ async function chAuth(installation_id) {
 		})
 	} else {
 		var cert = process.env.github_key //(fs.readFileSync('cubohub.pem')).toString()
-		var token = jwt.sign({}, `-----BEGIN RSA PRIVATE KEY-----
-MIIEpAIBAAKCAQEAxardMQYuwsYozkCTA6uv+CGGFTFk/8BFdmJXrZjTKOrsDOvW
-w52Ta1DBWxMhXVUXgSSglbyjman5jUUiTN2qFQmG5Y9rLm7zq9Qcc3StwOlmojRq
-pdxvxT0f1rNuFNhrTMiPZFEqCHMUm6+aO0SqX5u1MRWDYaQu+2C+auFtKl+mSeLr
-NysG23Y9Q9xsCxzboYEhQyiG3zNtA5zZUGagfLKL0z6TiX/3RhVznFGAzQ2pJ8Wq
-vmosFCGtxMnPiNuo6vEHhdZjoTMRdcE5P+BWb5tca2to7ObGyDVYDBdQmVJAF7PX
-Pbxpzy07ahZqXc9QxZ7crBTHEe2RafuY1FyAdwIDAQABAoIBAAyM0ahoLRXewP5/
-aRYlk3Gcp0e3MCNw0Lg4fDqgZl/FsqELZEJdQdvhb7VZnJexbGGdsrhvFrAN87M9
-fXUF6eOWDEOM/JAhKUVynS/Ta6jA6OxJia/oNAyA2gGmuMmICCAC59/Fq3aH3/oW
-hyNWM78IQtPP+tx7MSRyuwRMNcMn3PVRZMoypWkfw1KimQAcpw2hnMRvTnGp1mKH
-6VdVMGTFx2xbjH38VUqYr9mZpd5EINMFgM/JHw6DyKLglIoAYdQrrkLFtyvRIHxM
-40KCSK9R+tytz4ciNR/ikOwRoX4fkk4nx/JVxiNWvGsVRq7WocD9Gu2ayGD5x2Gc
-jnhBW7kCgYEA4PbT8gcnLx7VDgFSrDZNRNhE1Up9LnvJEXr8D8L9/lTM0yjEKJFo
-oyYTWSL1lkwXmbAiqKyWpxWTJ4hIfjIIe7wMZqHEx0iqesEx/k8Ky8G6R+0JoW4S
-FbBx7rOh6jwc/xYMFQdDSU4ApJ7QgpqVvKpSOzs0/TqYgvODN9vMZh0CgYEA4O/7
-1TipvBC4yD6qv5pif1P98uHW6VcIKa1HJ7rnU9as7Eaggp9yPlmYgFbvykVIjt+n
-M7OTe6pHdInTu9zETFd3pL0v8gP7T83C4Cs/iPscr25n6z5+S/E0/v5amj5hdoyC
-SNHGreEJKpXEKpH8kngGMO6VtweeXulmeGxMrKMCgYAsfYQjDHkaX42hLG/OMRsM
-73yFdirVo5N7SohJEbYrs1eityA8Ka24/lG7QiexprDQKz5ff2p39tNYcSJtGrYE
-yoblUT7abquQhV6+vaET9OdDTESoUV1wPqn5nDr8WREe/Zw8GGidObj01ZfFDI9q
-dYC3yBjNr+Xzl/cud+CvnQKBgQDEdPV3Uaj1R4mL4yfQdq9mU95tfo/sdoX7mIqY
-Caa2071uE3VnAImQKUKHfOaru/1WQ8JN5p5+GMeV4jbaUkPkBVTKvi2c65tYJPb6
-QOuZ4PA5zGzYylkWTNIjj9Vj9+2505iKryUegng2CF4vbBezeT63B/ocxHuum51S
-ugvxjwKBgQCVSGEm9sbGsumYGzONIffT4j23OlcM0roq0d571Fx+KtcRlXDvXx/D
-0Ow08e5Vj/ncn2w0095Ao/2CA/yraNX9yaU6BSUDNq4KqXrBmoQEiYsr2k1pdy8v
-x0NScFFjcTrvlEVWMdZZO5UNTz8hTG8SrVexQ7pXxsuNsuR28s3xCw==
------END RSA PRIVATE KEY-----`, {
+		var token = jwt.sign({}, cert, {
 			algorithm: 'RS256',
 			expiresIn: '2m',
 			issuer: process.env.github_app_id
