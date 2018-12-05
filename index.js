@@ -59,40 +59,37 @@ async function chAuth(installation_id) {
 
 function chUpdateFile(github, path, code, message, branch, owner, repo, gitauthor) {
 	log(`[+] chUpdateFile: +github, ${path}, +code, ${message}, ${branch}, ${owner}, ${repo}`)
+	var param = {
+		owner: owner,
+		repo: repo,
+		path: path,
+		message: message,
+		branch: branch,
+		content: Buffer.from(code).toString('base64'),
+	}
+
+	if (gitauthor && gitauthor.name == 'CuboHub[Bot]') {
+		param.author = gitauthor
+	} else if (gitauthor) {
+		param.author = gitauthor
+		param.committer = gitauthor
+	}
+
 	github.repos.getContents({
 		owner: owner,
 		repo: repo,
 		path: path,
 		ref: 'refs/heads/' + branch + ''
 	}).then((res) => {
-		var param = {
-			owner: owner,
-			repo: repo,
-			path: path,
-			message: message,
-			branch: branch,
-			content: Buffer.from(code).toString('base64'),
+		var sha = res.data.sha
+		var content = Buffer.from(res.data.content, 'base64').toString()
+		if (content == code) {
+			log('[+] Same updateFile')
+			return
 		}
-		if (gitauthor && gitauthor.name == 'CuboHub[Bot]') {
-			param.author = gitauthor
-		} else if (gitauthor) {
-			param.author = gitauthor
-			param.committer = gitauthor
-		}
-		if (res && res.data.sha) {
-			//log(res.data.sha)
-			var sha = res.data.sha
-			var content = Buffer.from(res.data.content, 'base64').toString()
-			if (content == code) {
-				log('[+] Same updateFile')
-				return
-			}
-			param.sha = sha
-			return github.repos.updateFile(param)
-		} else {
-			return github.repos.createFile(param)
-		}
-	})
+		param.sha = sha
+		return github.repos.updateFile(param)
+	}).catch(() => github.repos.createFile(param))
 }
 
 async function chPage(github, owner, repo_name, yml, returnHTML) {
