@@ -43,6 +43,7 @@
   "dependencies": {
     "axios": "0.18.0",
     "bytelabel": "2.0.2",
+    "handlebars": "4.0.12",
     "hubdown": "2.1.0",
     "jformat": "1.0.4",
     "js-yaml": "3.12.0",

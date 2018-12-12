@@ -5,6 +5,7 @@ const hubdown = require('hubdown')
 const bytelabel = require('bytelabel')
 const dateTime = require('node-datetime')
 const getConfig = require('probot-config')
+const handlebars = require('handlebars')
 
 module.exports = (app) => {
 	app.log('Yay, the app was loaded!')
@@ -177,7 +178,9 @@ module.exports = (app) => {
 			template: config.template,
 			cubohub: cubohub
 		}
-		site = site.format(info, true)
+
+		site = handlebars.compile(site)(info)
+		site = site.format(info, true) //TODO DEPRECATED
 
 		var dataTimeNowStr = dataTimeNow.format('m/d/Y H:M')
 		params.message = `Update GitHub Page: ${dataTimeNowStr}`
