@@ -41,12 +41,14 @@
     "server.js"
   ],
   "dependencies": {
-    "probot": "7.4.0",
+    "axios": "0.18.0",
     "bytelabel": "2.0.2",
     "hubdown": "2.1.0",
     "jformat": "1.0.4",
     "js-yaml": "3.12.0",
-    "node-datetime": "2.1.2"
+    "node-datetime": "2.1.2",
+    "probot": "7.4.0",
+    "probot-config": "1.0.0"
   },
   "devDependencies": {
     "jest": "23.6.0",

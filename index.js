@@ -1,71 +1,42 @@
+const axios = require('axios')
 const yaml = require('js-yaml')
 const jformat = require('jformat')
 const hubdown = require('hubdown')
-const dateTime = require('node-datetime')
 const bytelabel = require('bytelabel')
+const dateTime = require('node-datetime')
+const getConfig = require('probot-config')
 
 module.exports = (app) => {
 	app.log('Yay, the app was loaded!')
 
-	const createFile = () => {
-		log(`[+] chUpdateFile: +github, ${path}, +code, ${message}, ${branch}, ${owner}, ${repo}`)
-		var param = {
-			owner: owner,
-			repo: repo,
-			path: path,
-			message: message,
-			branch: branch,
-			content: Buffer.from(code).toString('base64'),
-		}
+	const cubohub = 'Created with <a href="https://CuboHub.github.io" target="_blank">CuboHub</a>'
 
-		if (gitauthor && gitauthor.name == 'CuboHub[Bot]') {
-			param.author = gitauthor
-		} else if (gitauthor) {
-			param.author = gitauthor
-			param.committer = gitauthor
-		}
-
-		github.repos.getContents({
-			owner: owner,
-			repo: repo,
-			path: path,
-			ref: 'refs/heads/' + branch + ''
+	const request = async (url) => {
+		return await axios({
+			method: 'GET',
+			url: url,
 		}).then((res) => {
-			var sha = res.data.sha
-			var content = Buffer.from(res.data.content, 'base64').toString()
-			if (content == code) {
-				log('[+] Same updateFile')
-				return
+			if (res.data) {
+				return res.data.toString()
 			}
-			param.sha = sha
-			return github.repos.updateFile(param)
-		}).catch(() => github.repos.createFile(param))
+			return ''
+		}).catch(() => {
+			return ''
+		})
 	}
 
-	const checkRepo = (github, repo) => {
-		log(`[+] chPage: +github, ${owner}, ${repo_name}, +yml, ${returnHTML}`)
-		var dataTimeNow = dateTime.create();
-		var config = yaml.safeLoad(yml);
+	const done = async (ctx, github, params) => {
+		app.log(`[+] Check Repo: +ctx, +github, (${params.owner}, ${params.name})`)
 
-		var repo = await github.repos.get({
-			owner: owner,
-			repo: repo_name
-		})
+		var config = await getConfig(ctx, 'cubohub.yml')
+		var dataTimeNow = dateTime.create()
+		var repo = await github.repos.get(params)
 		repo = repo.data
 
-		var site = ''
-		var link = '<a href="{url}">{title}</a>'
-		if (config.template_raw) {
-			site = await request(config.template_raw)
-		} else {
-			site = await request(`https://raw.githubusercontent.com/CuboHub/${config.template}-theme/master/default.html`)
-			link = await request(`https://raw.githubusercontent.com/CuboHub/${config.template}-theme/master/link.html`)
-		}
-		if (config.link_template_raw) {
-			link = await request(config.link_template_raw)
-		}
+		app.log(config)
 
-		var cubohub = 'Created with <a href="https://CuboHub.github.io" target="_blank">CuboHub</a>'
+		var site = await request(config.template)
+
 		var seo = `
 			<meta name="author" content="{author}" />
 			<meta name="description" content="{description}" />
@@ -83,8 +54,9 @@ module.exports = (app) => {
 		if (!config.seo) {
 			config.seo = {}
 		}
+		app.log(repo)
 		seo = seo.format({
-			author: config.seo['author'] || owner,
+			author: config.seo['author'] || params.owner,
 			description: config.seo['description'] || config.description,
 			keywords: config.seo['keywords'] || repo.name,
 			title: config.seo['title'] || config.title || repo.name,
@@ -94,56 +66,66 @@ module.exports = (app) => {
 			twitter_card: config.seo['twitter_card'] || ''
 		}, true)
 
-		var links = config.links || {}
-		var links_html = ''
-		for (var index in links) {
-			var url = links[index]
-			links_html += link.format({
-				url: url,
-				title: index
-			}, true) + '\n'
+		var links = []
+		for (var index in (config.links || {})) {
+			links.push({
+				title: index.toString(),
+				href: links[index]
+			})
 		}
 
-		var readme_md = ''
+		var readmeMd = ''
 		if (config.readme) {
-			if (config.readme == true) {
+			if (config.readme === true) {
 				config.readme = 'README.md'
 			}
-			if (!config.readme == true) {
-				readme_md == ''
+			if (!config.readme === true) {
+				readmeMd == ''
 			} else {
-				var readme_data = await github.repos.getContents({
-					owner: owner,
-					repo: repo_name,
+				var readmeData = await github.repos.getContents({
+					...params,
 					path: config.readme || 'README.md'
+				}).catch((err) => {
+					//TODO Log of error
+					return {
+						data: {
+							content: ''
+						}
+					}
 				})
-				readme_md = Buffer.from(readme_data.data.content, 'base64').toString()
+				readmeMd = Buffer.from(readmeData.data.content, 'base64').toString()
 			}
 		}
 
-		var iframe_html = ''
+		var iframeHtml = ''
 		if (config.iframe) {
-			if (config.iframe == true) {
+			if (config.iframe === true) {
 				config.iframe = 'iframe.html'
 			}
-			if (!config.iframe == true) {
-				iframe_html = ''
+			if (!config.iframe === true) {
+				iframeHtml = ''
 			} else {
-				var iframe_data = await github.repos.getContents({
-					owner: owner,
-					repo: repo_name,
+				var iframeData = await github.repos.getContents({
+					...params,
 					path: config.iframe || 'iframe.html'
+				}).catch((err) => {
+					//TODO Log of error
+					return {
+						data: {
+							content: ''
+						}
+					}
 				})
-				iframe_html = Buffer.from(iframe_data.data.content, 'base64').toString()
+				iframeHtml = Buffer.from(iframeData.data.content, 'base64').toString()
 			}
 		}
 
-		var readme_html = await hubdown(readme_md)
-		readme_html = readme_html.content
-		var content_html = readme_html + iframe_html
+		var readmeHtml = await hubdown(readmeMd)
+		readmeHtml = readmeHtml.content
+		var contentHtml = readmeHtml + iframeHtml
 
-		var size_repo_kb = (config.size || repo.size) * 1024
-		var size_repo = bytelabel(size_repo_kb, {
+		var sizeRepoKb = (config.size || repo.size) * 1024
+		var sizeRepo = bytelabel(sizeRepoKb, {
 			round: true
 		})
 
@@ -157,19 +139,22 @@ module.exports = (app) => {
 			homepage: repo.homepage,
 			description: config.description || repo.description,
 			language: config.language || repo.language,
-			size: size_repo,
-			size_kb: size_repo_kb,
+			size: sizeRepo,
+			size_kb: sizeRepoKb,
 			watchers: repo.watchers || '0',
 			forks_count: repo.forks_count || '0',
 			fork: repo.forks_count || '0',
 			stargazers_count: repo.stargazers_count || '0',
 			stars: repo.stargazers_count || '0',
-			readme_html: readme_html || '',
-			iframe_html: iframe_html || '',
+			readme_md: readmeMd || '',
+			readme: readmeHtml || '',
+			readme_html: readmeHtml || '',
+			iframe_html: iframeHtml || '',
+			iframe: iframeHtml || '',
 			created_at: repo.created_at,
 			updated_at: repo.updated_at,
 			pushed_at: repo.pushed_at,
-			content_html: content_html,
+			content_html: contentHtml,
 			html_url: repo.html_url,
 			git_url: repo.git_url,
 			ssh_url: repo.ssh_url,
@@ -188,41 +173,67 @@ module.exports = (app) => {
 			mirror_url: repo.mirror_url,
 			archived: repo.archived,
 			seo: seo,
-			links: links_html,
+			links: links,
+			template: config.template,
 			cubohub: cubohub
 		}
-
-		var branch = 'master'
-		if (config.branch) {
-			branch = config.branch
-		}
-
-		var dataTimeNowStr = dataTimeNow.format('m/d/Y H:M')
-		var cmessage = `Update GitHub Page: ${dataTimeNowStr}`
-		if (config.cmessage) {
-			cmessage = config.cmessage
-		}
-
-		var name = 'CuboHub[Bot]'
-		var email = 'Bot@CuboHub.github.io'
-		if (config.gitauthor) {
-			if (config.gitauthor.name && config.gitauthor.email) {
-				name = config.gitauthor.name
-				email = config.gitauthor.email
-			}
-		}
-		var gitauthor = {
-			name: name,
-			email: email
-		}
-
 		site = site.format(info, true)
 
-		if (returnHTML) {
-			return site
-		} else {
-			return chUpdateFile(github, 'index.html', site, cmessage, branch, owner, repo_name, gitauthor)
+		var dataTimeNowStr = dataTimeNow.format('m/d/Y H:M')
+		params.message = `Update GitHub Page: ${dataTimeNowStr}`
+		if (config.cmessage) {
+			params.message = config.cmessage
 		}
+
+		if (config.gitauthor) {
+			if (config.gitauthor.name && config.gitauthor.email) {
+				var gitauthor = {}
+				gitauthor.name = config.gitauthor.name
+				gitauthor.email = config.gitauthor.email
+				params.author = gitauthor
+				params.committer = gitauthor
+			}
+		}
+
+		params.path = 'index.html'
+		params.branch = 'gh-pages'
+		params.ref = `refs/heads/${params.branch}`
+		params.content = Buffer.from(site).toString('base64')
+		return await github.repos.getContents({
+			owner: params.owner,
+			repo: params.repo,
+			path: params.path,
+			ref: params.ref
+		}).then((res) => {
+			params.sha = res.data.sha
+			var content = Buffer.from(res.data.content, 'base64').toString()
+			if (content == site) {
+				return
+			}
+			return github.repos.updateFile({
+				owner: params.owner,
+				repo: params.repo,
+				path: params.path,
+				sha: params.sha,
+				message: params.message,
+				content: params.content,
+				branch: params.branch,
+				committer: params.committer,
+				author: params.author
+			})
+		}).catch(() => {
+			return github.repos.createFile({
+				owner: params.owner,
+				repo: params.repo,
+				path: params.path,
+				message: params.message,
+				content: params.content,
+				branch: params.branch,
+				committer: params.committer,
+				author: params.author
+			})
+		})
+		app.log('[+] Done')
 	}
 
 	app.on([
@@ -239,7 +250,7 @@ module.exports = (app) => {
 			}
 		}
 		for (var repo of repositories) {
-			await checkRepo(ctx.github, {
+			await done(ctx, ctx.github, {
 				owner: repo.full_name.replace(`/${repo.name}`, ''),
 				repo: repo.name
 			})
@@ -248,6 +259,6 @@ module.exports = (app) => {
 	})
 
 	app.on('push', async (ctx) => {
-		return await checkRepo(ctx.github, ctx.repo({}))
+		return await done(ctx, ctx.github, ctx.repo({}))
 	})
 }
