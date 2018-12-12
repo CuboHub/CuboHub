@@ -1,4 +1,36 @@
-'use strict'
+module.exports = (app) => {
+	app.log('Yay, the app was loaded!')
+
+	const checkRepo = (github, repo) => {
+		//TODO
+	}
+
+	app.on([
+		'installation',
+		'installation_repositories',
+		'integration_installation_repositories'
+	], async (ctx) => {
+		var repositories = []
+		if (ctx.payload) {
+			if (ctx.payload.repositories) {
+				repositories = ctx.payload.repositories
+			} else if (ctx.payload.repositories_added) {
+				repositories = ctx.payload.repositories_added
+			}
+		}
+		for (var repo of repositories) {
+			await checkRepo(ctx.github, {
+				owner: repo.full_name.replace(`/${repo.name}`, ''),
+				repo: repo.name
+			})
+		}
+		return
+	})
+
+	app.on('push', async (ctx) => {
+		return await checkRepo(ctx.github, ctx.repo({}))
+	})
+}
 
 const Client = require('@octokit/rest')
 const fs = require('fs')
@@ -16,46 +48,6 @@ const log = debug('CuboHub')
 var github = new Client({
 	debug: false
 })
-
-async function chAuth(installation_id) {
-	log(`[+] chAuth: ${installation_id}`)
-	var github = new Client({
-		debug: false
-	})
-
-	if (installation_id == 1 && process.env.github_token) {
-		github.authenticate({
-			type: 'token',
-			token: process.env.github_token
-		})
-	} else if (installation_id == 2 && process.env.github_cid && process.env.github_csecret) {
-		github.authenticate({
-			type: 'oauth',
-			key: process.env.github_cid,
-			secret: process.env.github_csecret
-		})
-	} else {
-		var cert = process.env.github_key //(fs.readFileSync('cubohub.pem')).toString()
-		var token = jwt.sign({}, cert, {
-			algorithm: 'RS256',
-			expiresIn: '2m',
-			issuer: process.env.github_app_id
-		})
-		await github.authenticate({
-			type: 'app',
-			token: token
-		})
-		var data = await github.apps.createInstallationToken({
-			installation_id: installation_id
-		})
-		var new_token = data.data.token
-		await github.authenticate({
-			type: 'token',
-			token: new_token
-		})
-	}
-	return github
-}
 
 function chUpdateFile(github, path, code, message, branch, owner, repo, gitauthor) {
 	log(`[+] chUpdateFile: +github, ${path}, +code, ${message}, ${branch}, ${owner}, ${repo}`)
@@ -308,60 +300,4 @@ function chCheckAllXML(github, owner, repo) {
 	listXML.forEach(path => {
 		chCheckXML(github, owner, repo, path)
 	})
-}
-
-async function chInit(installation_id, owner, repo) {
-	if (process.env.owner && owner == process.env.owner) {
-		installation_id = 1
-	}
-	log(`[+] chInit: ${installation_id}, ${owner}, ${repo}`)
-	var github = await chAuth(installation_id)
-	return chCheckAllXML(github, owner, repo)
-}
-
-async function chUpdateAllRepo(installation_id, owner) {
-	if (process.env.owner && owner == process.env.owner) {
-		installation_id = 1
-	}
-	log(`[+] chUpdateAllRepo: ${installation_id}, ${owner}`)
-	var github = await chAuth(installation_id)
-	var result = await github.repos.listForUser({
-		username: owner,
-		per_page: 100
-	}).catch(() => {})
-	result.data.forEach(repo => {
-		chCheckAllXML(github, owner, repo.name)
-	})
-}
-
-//chAuth(installation_id)
-//app.chAuth(64019)
-
-//chCheckXML(github, owner, repo, path)
-//chCheckXML(github, 'TiagoDanin', 'TestGithub', 'cubohub.yml')
-
-//chCheckAllXML(github, owner, repo)
-//chCheckAllXML(github, 'TiagoDanin', 'TestGithub')
-
-//chPage(github, owner, repo, yml, returnHTML)
-//chPage(github, 'TiagoDanin', 'TestGithub', 'yml', false)
-
-//chUpdateFile(github, path, code, message, branch, owner, repo, gitauthor)
-//chUpdateFile(github, 'index.html', '<html><h1>Hello World!</h1></html>', 'TEST: UP', 'master', 'TiagoDanin', 'TestGithub', {name: 'Bot', email: 'My@Bot.Bot'})
-
-//chInit(installation_id, owner, repo)
-//chInit(64019, 'TiagoDanin', 'TestGithub')
-
-//chUpdateAllRepo(installation_id, owner)
-//chUpdateAllRepo(1, 'TiagoDanin')
-
-module.exports = {
-	github,
-	chAuth,
-	chCheckXML,
-	chCheckAllXML,
-	chPage,
-	chUpdateFile,
-	chInit,
-	chUpdateAllRepo
 }
