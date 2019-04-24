@@ -705,10 +705,10 @@ isstream@~0.1.2:
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
   integrity sha1-R+Y/evVa+m+S4VAOaQ64uFKcCZo=
 
-jformat@1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/jformat/-/jformat-1.0.4.tgz#bcdac83545b0856ece045dbfdc62e1fbb2938726"
-  integrity sha512-1d27pyLfDd/rkXFpRKgKgpaACHCTNhX+5I6gIv+ynZgppkCj5AqglABdHLetsfPccKARh1OGyH8al9Bfxeuazg==
+jformat@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/jformat/-/jformat-1.1.0.tgz#c5a319f26c546c5423f3bd2b462bff0f00a20401"
+  integrity sha512-TwkYUzeRDX3UNKLho/yMSypsnsIq1agdCMuS7yAxEWvVX7U58YCYz1/gcUOAD7uU3dZq7509pIY/aREwpH+M5A==
 
 js-yaml@3.13.0:
   version "3.13.0"
