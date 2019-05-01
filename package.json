@@ -49,7 +49,7 @@
     "js-yaml": "3.13.0",
     "jsonwebtoken": "8.4.0",
     "node-datetime": "2.1.2",
-    "node-fetch": "2.4.1",
+    "node-fetch": "2.5.0",
     "request": "2.88.0",
     "request-promise-native": "1.0.7"
   },
