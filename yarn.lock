@@ -38,10 +38,10 @@
     universal-user-agent "^2.0.0"
     url-template "^2.0.8"
 
-"@octokit/webhooks@5.1.0":
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/@octokit/webhooks/-/webhooks-5.1.0.tgz#94ff222a1e0134e9d91917b8fa09d04d1b9893ff"
-  integrity sha512-ZSrxCo/7azVpiSwNvoLRWEpAUcVYr4XrKci/pf2q0NjeFjc6xS5SvDYe1lL2tI/lK4PA31ff20bOSPLmJtg+Lw==
+"@octokit/webhooks@5.4.1":
+  version "5.4.1"
+  resolved "https://registry.yarnpkg.com/@octokit/webhooks/-/webhooks-5.4.1.tgz#ad937975edca72584a7dea0f2f49d5e1cc4e1ab1"
+  integrity sha512-vslTwKYAQY6lFgKIpwEvID+TfKFuKHpLFJ10mdTLjQnG22ywo/T9Kfz0SvIWshtAA0thvndhXeZU0v6cFpAlEQ==
   dependencies:
     buffer-equal-constant-time "^1.0.1"
     debug "^4.0.0"
