@@ -50,7 +50,7 @@
     "jsonwebtoken": "8.4.0",
     "node-datetime": "2.1.2",
     "node-fetch": "2.5.0",
-    "request": "2.88.0",
+    "request": "2.88.2",
     "request-promise-native": "1.0.8"
   },
   "devDependencies": {}
