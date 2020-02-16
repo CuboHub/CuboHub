@@ -47,7 +47,7 @@
     "hubdown": "2.1.0",
     "jformat": "1.1.0",
     "js-yaml": "3.13.1",
-    "jsonwebtoken": "8.4.0",
+    "jsonwebtoken": "8.5.1",
     "node-datetime": "2.1.2",
     "node-fetch": "2.5.0",
     "request": "2.88.2",
