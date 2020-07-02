@@ -38,7 +38,7 @@
     "server.js"
   ],
   "dependencies": {
-    "@octokit/rest": "16.2.0",
+    "@octokit/rest": "16.43.2",
     "@octokit/webhooks": "5.1.0",
     "bytelabel": "2.0.2",
     "debug": "4.1.1",
