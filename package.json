@@ -39,7 +39,7 @@
   ],
   "dependencies": {
     "@octokit/rest": "16.2.0",
-    "@octokit/webhooks": "5.1.0",
+    "@octokit/webhooks": "9.26.3",
     "bytelabel": "2.0.2",
     "debug": "4.1.1",
     "express": "4.16.4",
