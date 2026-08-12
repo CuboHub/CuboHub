@@ -710,10 +710,10 @@ jformat@1.1.0:
   resolved "https://registry.yarnpkg.com/jformat/-/jformat-1.1.0.tgz#c5a319f26c546c5423f3bd2b462bff0f00a20401"
   integrity sha512-TwkYUzeRDX3UNKLho/yMSypsnsIq1agdCMuS7yAxEWvVX7U58YCYz1/gcUOAD7uU3dZq7509pIY/aREwpH+M5A==
 
-js-yaml@3.13.1:
-  version "3.13.1"
-  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.13.1.tgz#aff151b30bfdfa8e49e05da22e7415e9dfa37847"
-  integrity sha512-YfbcO7jXDdyj0DGxYVSlSeQNHbD7XPWvrVWeVUujrQEoZzWJIRrCPoyk6kL6IAjAG2IolMK4T0hNUe0HOUs5Jw==
+js-yaml@3.15.1:
+  version "3.15.1"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.15.1.tgz#24bc95028f361cdaaa84745b06a109c4486773c0"
+  integrity sha512-S99WuO3HlhO3XN41EtYUNl9zzXjoJx7QvmipxsJVxtCBT0YHEFy+iOJhjSvrmV12nYhWpZaM8lPHkJm0yUMbag==
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
